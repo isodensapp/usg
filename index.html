@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<!-- Isodens USG, montado em 2026-11-25 15:34: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
+<!-- Isodens USG, montado em 2026-11-25 16:17: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
@@ -191,33 +191,38 @@ button { font: inherit; color: inherit; }
   max-width: 860px; margin: 0 auto; padding: 26px 46px 28px 34px; border-radius: 2px;
   font-family: Calibri, Carlito, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.38;
 }
+.folha[contenteditable="true"] { cursor: text; caret-color: #111; }
+.folha:focus, .folha:focus-visible { outline: none; }
 .folha .aviso-vazio { color: #4a4d50; }
 .par { margin: 0 0 14px; }
 .par:last-child { margin-bottom: 0; }
 .par.titulo { font-size: 16px; }
-.linha { position: relative; margin: 0 -4px; padding: 0 4px; border-radius: 2px; }
-.linha .lt { white-space: pre-wrap; }
-.linha.negrito .lt { font-weight: bold; }
+.linha { position: relative; margin: 0 -4px; padding: 0 4px; border-radius: 2px; white-space: pre-wrap; overflow-wrap: break-word; }
+.linha.negrito { font-weight: bold; }
+/* o programa mudou (achado): realce amarelo */
 .linha.alterada { background: var(--realce); color: var(--realce-texto); }
-.linha.editada { background: var(--realce); color: var(--realce-texto); box-shadow: inset 3px 0 0 #7a6526; }
-.linha.fixa { cursor: default; }
-.vazia { color: #6a6458; font-style: italic; }
-
-.ferr { position: absolute; right: -42px; top: 0; display: flex; align-items: center; gap: 3px; height: 1.38em; }
-.lapis {
-  width: 24px; height: 20px; display: inline-flex; align-items: center; justify-content: center;
-  background: none; border: 0; border-radius: 3px; padding: 0; cursor: pointer; color: #4c4f52;
-  opacity: 0; transition: opacity .12s, background-color .12s;
+/* eu mudei (editada ou escrita à mão): fio fino na margem esquerda */
+.linha.manual::before {
+  content: ''; position: absolute; left: -9px; top: 3px; bottom: 3px; width: 2px; border-radius: 1px;
+  background: #3f7a83; pointer-events: none;
 }
-.linha:hover .lapis, .lapis:focus-visible { opacity: 1; }
-.lapis:hover { background: rgba(0,0,0,.1); color: #23262A; }
-.lapis:focus-visible { outline-color: var(--foco-papel); }
-.tag { font: 11px "Segoe UI", system-ui, sans-serif; color: #5b4a12; }
-.linha.editada .ferr { position: static; display: inline-flex; margin-left: 6px; vertical-align: baseline; height: auto; }
-.linha.editada .lapis { display: none; }
-.ferr .mini { font-family: "Segoe UI", system-ui, sans-serif; background: rgba(255,255,255,.35); border-color: #9a8a55; color: #3a2f0c; line-height: 16px; font-size: 11px; }
-.ferr .mini:hover { background: rgba(255,255,255,.6); }
+/* linha apagada: tracejado discreto no lugar, com "desfazer" na margem */
+.linha.removida { height: 7px; margin: 1px -4px; cursor: default; user-select: none; -webkit-user-select: none; }
+.linha.removida::after { content: ''; position: absolute; left: 4px; right: 4px; top: 3px; border-top: 1px dashed rgba(58, 52, 40, .35); }
+.linha.removida.manual::before { top: 0; bottom: 0; background: #8b8577; }
+.marca {
+  position: absolute; right: -32px; top: 0; height: 1.38em; display: flex; align-items: center;
+  user-select: none; -webkit-user-select: none; font-weight: normal;
+}
+.linha.removida .marca { top: -7px; }
+.desfazer {
+  width: 22px; height: 18px; display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 0; border-radius: 3px; padding: 0; cursor: pointer; color: #5f6a6c; opacity: .75;
+  transition: opacity .12s, background-color .12s;
+}
+.desfazer:hover, .desfazer:focus-visible { opacity: 1; background: rgba(0,0,0,.09); color: #23262A; }
 .folha :focus-visible { outline-color: var(--foco-papel); }
+.ilha { white-space: nowrap; }
 
 /* campos dentro do texto */
 .campo { font: inherit; color: inherit; vertical-align: baseline; }
@@ -247,24 +252,6 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
 .campo.calc.pendente { background: none; }
 .campo.outro { border-bottom: 1px dotted #5a5650; }
 
-.edicao {
-  width: 100%; font: inherit; color: var(--papel-texto); background: #EDE8DC;
-  border: 1px solid #22565E; border-radius: 2px; padding: 1px 4px; resize: none; overflow: hidden; display: block;
-}
-.ed-acoes { display: flex; gap: 4px; padding: 3px 0 4px; }
-.ed-acoes .mini { font-family: "Segoe UI", system-ui, sans-serif; background: #D3CEC3; color: var(--papel-texto); border-color: #7d786e; }
-.ed-acoes .mini.sutil { background: none; border-color: transparent; }
-
-/* extras */
-.extras { max-width: 860px; margin: 12px auto 0; display: grid; grid-template-columns: 3fr 2fr; gap: 10px; }
-.extra { display: flex; flex-direction: column; gap: 3px; color: var(--texto2); font-size: 12px; }
-.extra small { color: #6f7a7d; font-size: 11px; }
-.extra textarea, .extra input {
-  font: 13px/1.35 "Segoe UI", system-ui, sans-serif; color: var(--texto);
-  background: var(--painel); border: 1px solid var(--linha); border-radius: 4px; padding: 5px 7px; resize: vertical; min-height: 30px;
-}
-.extra textarea:focus-visible, .extra input:focus-visible { outline-offset: 0; border-color: var(--destaque); }
-
 /* rodapé */
 .rodape {
   display: flex; align-items: center; gap: 16px; height: 30px; padding: 0 14px;
@@ -277,7 +264,6 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
 
 @media (max-width: 1100px) {
   .folha { padding: 20px 40px 22px 22px; }
-  .extras { grid-template-columns: 1fr; }
 }
 
 </style>
@@ -302,17 +288,7 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
   </section>
   <section class="col-laudo" aria-label="Laudo">
     <div class="rolagem" id="rolagemFolha">
-      <article class="folha" id="folha" aria-label="Laudo"></article>
-      <div class="extras">
-        <label class="extra">
-          <span>Acrescentar texto <small>(parágrafo livre antes da conclusão)</small></span>
-          <textarea id="textoExtra" rows="2" spellcheck="true"></textarea>
-        </label>
-        <label class="extra">
-          <span>Item extra de conclusão</span>
-          <input id="conclusaoExtra" type="text" autocomplete="off">
-        </label>
-      </div>
+      <article class="folha" id="folha" aria-label="Laudo" role="textbox" aria-multiline="true" spellcheck="true" lang="pt-BR" autocorrect="off" autocapitalize="off"></article>
     </div>
     <footer class="rodape" id="rodape" aria-live="polite"></footer>
   </section>
@@ -388,6 +364,61 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     for (k in extra) if (Object.prototype.hasOwnProperty.call(extra, k)) r[k] = extra[k];
     return r;
   }
+
+  // ---------- conteúdo de linha em "partes" ----------
+  // Uma linha editada à mão (ou escrita à mão) guarda o conteúdo como lista de partes: textos e
+  // referências a campos { escopo, chave } (o campo continua campo: valor, pendência e cálculo).
+  // Posições contam 1 por caractere de texto e 1 por campo.
+
+  function ehRef(p) { return p != null && typeof p === 'object'; }
+
+  function normalizarPartes(ps) {
+    var r = [];
+    (ps || []).forEach(function (p) {
+      if (p == null) return;
+      if (ehRef(p)) {
+        if (p.chave != null && p.chave !== '') r.push({ escopo: String(p.escopo || 'mascara'), chave: String(p.chave) });
+        return;
+      }
+      var s = String(p);
+      if (s === '') return;
+      if (r.length && !ehRef(r[r.length - 1])) r[r.length - 1] += s; else r.push(s);
+    });
+    return r;
+  }
+
+  function tamanhoPartes(ps) { var n = 0; ps.forEach(function (p) { n += ehRef(p) ? 1 : p.length; }); return n; }
+
+  function fatiarPartes(ps, a, b) {
+    var r = [], u = 0;
+    ps.forEach(function (p) {
+      if (ehRef(p)) { if (u >= a && u < b) r.push(p); u += 1; return; }
+      var i = Math.max(a - u, 0), j = Math.min(b - u, p.length);
+      if (j > i) r.push(p.slice(i, j));
+      u += p.length;
+    });
+    return normalizarPartes(r);
+  }
+
+  function textoPartes(ps) { return ps.map(function (p) { return ehRef(p) ? '' : p; }).join(''); }
+  function partesVazias(ps) { return !ps.some(function (p) { return ehRef(p) || p.trim() !== ''; }); }
+  function partesIguais(a, b) { return JSON.stringify(normalizarPartes(a)) === JSON.stringify(normalizarPartes(b)); }
+
+  function partesDeSegs(segs) {
+    return normalizarPartes((segs || []).map(function (s) { return s.t === 'campo' ? { escopo: s.escopo || 'mascara', chave: s.chave } : s.v; }));
+  }
+  function tamanhoSegs(segs) { var n = 0; (segs || []).forEach(function (s) { n += s.t === 'campo' ? 1 : String(s.v).length; }); return n; }
+  function fatiarSegs(segs, a, b) {
+    var r = [], u = 0;
+    (segs || []).forEach(function (s) {
+      if (s.t === 'campo') { if (u >= a && u < b) r.push(s); u += 1; return; }
+      var v = String(s.v), i = Math.max(a - u, 0), j = Math.min(b - u, v.length);
+      if (j > i) r.push({ t: 'txt', v: v.slice(i, j) });
+      u += v.length;
+    });
+    return r;
+  }
+  function limitar(pos, n) { pos = +pos || 0; return pos < 0 ? 0 : pos > n ? n : pos; }
 
   // ---------- números e expressões ----------
 
@@ -622,10 +653,14 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     });
     var ok = (categoria.mascaras || []).some(function (m) { return m.id === mascaraId; });
     this.estado = estadoVazio(ok ? mascaraId : categoria.mascaras[0].id);
+    this._registrarOrdem();
   }
 
+  // edicoes: chave da linha -> { partes, base } (partes vazias = linha apagada).
+  // livres: linhas escritas à mão, { id, ancora (chave da linha vizinha), pos ('depois'|'antes'),
+  // quebra (começa parágrafo), partes }.
   function estadoVazio(mascaraId) {
-    return { mascara: mascaraId, seq: 0, achados: [], valoresMascara: {}, edicoes: {}, textoExtra: '', conclusaoExtra: '' };
+    return { mascara: mascaraId, seq: 0, achados: [], valoresMascara: {}, edicoes: {}, livres: [], seqLivre: 0, textoExtra: '', conclusaoExtra: '' };
   }
 
   var P = Laudo.prototype;
@@ -704,7 +739,13 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     return prepararVariante(r.achado.variantes[inst.variante] || r.achado.variantes[0]).campos[chave] || null;
   };
 
+  // A escolha de lado (porEscolha) pode mudar de lugar as linhas: confere edições e âncoras depois.
   P.definirValor = function (escopo, chave, valor) {
+    this._definirValor(escopo, chave, valor);
+    this._podar();
+  };
+
+  P._definirValor = function (escopo, chave, valor) {
     var alvo = escopo === 'mascara' ? this.estado.valoresMascara : (this.instancia(escopo) || {}).valores;
     if (!alvo) return;
     var seg = this.campo(escopo, chave);
@@ -744,36 +785,197 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     this._podar();
   };
 
-  P.editarLinha = function (chave, texto) {
+  // ---------- edição à mão ----------
+
+  // Conteúdo novo de uma linha: texto (string) ou partes (textos e { escopo, chave } dos campos).
+  // Igual ao gerado = volta a não editada; vazio = linha apagada (fica guardada; desfazer a traz).
+  // Linha escrita à mão ("F:n"): troca o conteúdo dela.
+  P.editarLinha = function (chave, conteudo) {
+    var partes = normalizarPartes(Array.isArray(conteudo) ? conteudo : [conteudo == null ? '' : String(conteudo)]);
+    var f = this._livre(chave);
+    if (f) { f.partes = partes; return true; }
     var l = this._linhas(false)[chave];
-    if (!l || l.editavel === false) return false;
-    this.estado.edicoes[chave] = { texto: String(texto), base: l.base };
+    if (!l || l.editavel === false || l.livre) return false;
+    if (partesIguais(partes, partesDeSegs(l.segs))) delete this.estado.edicoes[chave];
+    else this.estado.edicoes[chave] = { partes: partes, base: l.base };
     return true;
   };
 
-  P.desfazerEdicao = function (chave) { delete this.estado.edicoes[chave]; };
+  // Volta a linha ao texto gerado (traz de volta a apagada). Linha escrita à mão: sai.
+  P.desfazerEdicao = function (chave) {
+    var f = this._livre(chave);
+    if (f) this._tirarLivre(f); else delete this.estado.edicoes[chave];
+    this._registrarOrdem();
+  };
+
+  // Apaga a linha: a escrita à mão sai; a gerada fica guardada como apagada.
+  P.removerLinha = function (chave) {
+    var f = this._livre(chave);
+    if (f) { this._tirarLivre(f); this._registrarOrdem(); return true; }
+    return this.editarLinha(chave, []);
+  };
+
+  P.ehLivre = function (chave) { return !!this._livre(chave); };
+
+  // Enter na posição pos da linha. Devolve onde fica o cursor: { chave, pos }.
+  // - linha vazia: parágrafo novo (a linha vazia passa a abrir parágrafo);
+  // - item "- " vazio escrito à mão: sai da lista (fica vazio);
+  // - começo da linha: linha nova vazia acima;
+  // - resto: o que está depois do cursor desce para uma linha nova logo abaixo, no mesmo
+  //   parágrafo (item "- ..." continua item).
+  P.quebrarLinha = function (chave, pos) {
+    var l = this._linhas(true)[chave];
+    if (!l || l.editavel === false) return null;
+    var partes = partesDeSegs(l.segs), n = tamanhoPartes(partes), f = this._livre(chave), plano = textoPartes(partes), r, g;
+    pos = limitar(pos, n);
+    if (partesVazias(partes)) {
+      if (f) { f.quebra = true; r = { chave: chave, pos: 0 }; }
+      else { g = this._novaLivre(chave, 'depois', [], true); r = { chave: 'F:' + g.id, pos: 0 }; }
+    } else if (f && /^\s*-\s*$/.test(plano) && !partes.some(ehRef)) {
+      f.partes = []; r = { chave: chave, pos: 0 };
+    } else if (pos === 0) {
+      if (chave === 'T') return { chave: chave, pos: 0 };
+      g = this._novaLivre(chave, 'antes', [], false);
+      if (f && f.quebra) { f.quebra = false; g.quebra = true; }
+      r = { chave: chave, pos: 0 };
+    } else {
+      var resto = fatiarPartes(partes, pos, n);
+      var item = /^- /.test(plano) && pos >= 2 && !/^\s*-/.test(textoPartes(resto)) ? '- ' : '';
+      if (pos < n) this.editarLinha(chave, fatiarPartes(partes, 0, pos));
+      g = this._novaLivre(chave, 'depois', [item].concat(resto), false);
+      r = { chave: 'F:' + g.id, pos: item.length };
+    }
+    this._registrarOrdem();
+    return r;
+  };
+
+  // Backspace no começo de "baixo" (ou Delete no fim de "cima"): junta as duas linhas.
+  // Linha que abre parágrafo à mão: primeiro desfaz o parágrafo. Linha vazia: só sai.
+  // Nada entra no título.
+  P.juntarLinhas = function (cima, baixo) {
+    var ls = this._linhas(true), a = ls[cima], b = ls[baixo];
+    if (!a || !b || cima === baixo || a.editavel === false || b.editavel === false) return null;
+    var pa = partesDeSegs(a.segs), pb = partesDeSegs(b.segs), fb = this._livre(baixo), r;
+    if (fb && fb.quebra) { fb.quebra = false; r = { chave: baixo, pos: 0 }; }
+    else if (partesVazias(pb)) { this.removerLinha(baixo); r = { chave: cima, pos: tamanhoPartes(pa) }; }
+    else if (partesVazias(pa)) { this.removerLinha(cima); r = { chave: baixo, pos: 0 }; }
+    else if (cima === 'T') return null;
+    else {
+      this.editarLinha(cima, pa.concat(pb));
+      this.removerLinha(baixo);
+      r = { chave: cima, pos: tamanhoPartes(pa) };
+    }
+    this._registrarOrdem();
+    return r;
+  };
+
+  // Troca o trecho entre ini e fim ({ chave, pos }, em qualquer ordem) por texto puro.
+  // Linhas inteiras no meio saem; "\n" no texto vira linha nova, linha em branco vira parágrafo.
+  P.substituirTrecho = function (ini, fim, texto) {
+    var lista = linhasEmOrdem(this._compor(true));
+    var idx = function (p) { for (var i = 0; p && i < lista.length; i++) if (lista[i].chave === p.chave) return i; return -1; };
+    var i0 = idx(ini), i1 = idx(fim), t;
+    if (i0 < 0 || i1 < 0) return null;
+    if (i0 > i1 || (i0 === i1 && ini.pos > fim.pos)) { t = ini; ini = fim; fim = t; t = i0; i0 = i1; i1 = t; }
+    var a = lista[i0], b = lista[i1];
+    if (a.editavel === false) return null;
+    var pa = partesDeSegs(a.segs), pb = partesDeSegs(b.segs);
+    var cab = fatiarPartes(pa, 0, limitar(ini.pos, tamanhoPartes(pa)));
+    var cauda = fatiarPartes(pb, limitar(fim.pos, tamanhoPartes(pb)), tamanhoPartes(pb));
+    for (var k = i1; k > i0; k--) if (!lista[k].removida && lista[k].editavel !== false) this.removerLinha(lista[k].chave);
+    var pedacos = String(texto == null ? '' : texto).replace(/\r\n?/g, '\n').split('\n'), r;
+    if (pedacos.length === 1) {
+      this.editarLinha(a.chave, cab.concat([pedacos[0]], cauda));
+      r = { chave: a.chave, pos: tamanhoPartes(cab) + pedacos[0].length };
+    } else {
+      this.editarLinha(a.chave, cab.concat([pedacos[0]]));
+      var anc = a.chave, quebra = false;
+      for (var j = 1; j < pedacos.length; j++) {
+        var ult = j === pedacos.length - 1;
+        if (pedacos[j].trim() === '' && !ult) { quebra = true; continue; }
+        var f = this._novaLivre(anc, 'depois', ult ? [pedacos[j]].concat(cauda) : [pedacos[j]], quebra);
+        quebra = false; anc = 'F:' + f.id;
+        r = { chave: anc, pos: pedacos[j].length };
+      }
+    }
+    this._registrarOrdem();
+    return r;
+  };
+
+  // Texto puro e HTML (mesma formatação da cópia inteira) do trecho entre ini e fim.
+  P.trecho = function (ini, fim) { return trecho(this.compor(), ini, fim); };
+
+  P._livre = function (chave) {
+    var m = /^F:(\d+)$/.exec(String(chave || ''));
+    if (!m) return null;
+    var id = +m[1];
+    return this.estado.livres.filter(function (f) { return f.id === id; })[0] || null;
+  };
+
+  P._novaLivre = function (ancora, pos, partes, quebra) {
+    var E = this.estado;
+    var f = { id: ++E.seqLivre, ancora: ancora, pos: pos === 'antes' ? 'antes' : 'depois', quebra: !!quebra, partes: normalizarPartes(partes) };
+    E.livres.push(f);
+    return f;
+  };
+
+  // Tira uma linha escrita à mão; as ancoradas nela passam para o lugar dela.
+  P._tirarLivre = function (f) {
+    var E = this.estado, ch = 'F:' + f.id;
+    E.livres = E.livres.filter(function (g) { return g !== f; });
+    E.livres.forEach(function (g) { if (g.ancora === ch) { g.ancora = f.ancora; g.pos = f.pos; } });
+  };
+
+  P._linhaLivre = function (f) {
+    return { chave: 'F:' + f.id, base: null, segs: this._segsDePartes(f.partes), alterada: false, origem: null, tipo: 'livre', livre: true, quebra: !!f.quebra, editada: false };
+  };
+
+  // Partes -> segmentos; referência a campo que não existe mais (achado removido) sai.
+  P._segsDePartes = function (ps) {
+    var self = this, r = [];
+    (ps || []).forEach(function (p) {
+      if (!ehRef(p)) { if (p !== '') r.push({ t: 'txt', v: p }); return; }
+      var s = self.campo(p.escopo, p.chave);
+      if (s) r.push(copiar(s, { escopo: p.escopo }));
+    });
+    return r;
+  };
 
   P.definirTextoExtra = function (s) { this.estado.textoExtra = String(s || ''); };
   P.definirConclusaoExtra = function (s) { this.estado.conclusaoExtra = String(s || ''); };
 
   // "Novo laudo": limpa tudo, mantém a máscara.
-  P.limpar = function () { this.estado = estadoVazio(this.estado.mascara); };
+  P.limpar = function () { this.estado = estadoVazio(this.estado.mascara); this._registrarOrdem(); };
 
   // Edição de linha vale enquanto a linha existir com o mesmo texto de origem.
+  // Linha escrita à mão cuja âncora sumiu sobe para a linha anterior que continua no laudo
+  // (pela ordem de antes da mudança); nunca some.
   P._podar = function () {
-    var linhas = this._linhas(false), ed = this.estado.edicoes;
-    Object.keys(ed).forEach(function (k) { if (!linhas[k] || linhas[k].base !== ed[k].base) delete ed[k]; });
+    var E = this.estado, base = this._linhas(false, true), ed = E.edicoes, livres = {}, ordem = this._ordem || [];
+    Object.keys(ed).forEach(function (k) { if (!base[k] || base[k].base !== ed[k].base) delete ed[k]; });
+    E.livres.forEach(function (f) { livres['F:' + f.id] = true; });
+    E.livres.forEach(function (f) {
+      if (f.ancora === 'T' || base[f.ancora] || livres[f.ancora]) return;
+      var i = ordem.indexOf(f.ancora), nova = 'T';
+      while (--i >= 0) if (base[ordem[i]] || livres[ordem[i]]) { nova = ordem[i]; break; }
+      f.ancora = nova; f.pos = 'depois';
+    });
+    this._registrarOrdem();
   };
 
-  P._linhas = function (comEdicoes) {
-    var mapa = {}, c = this._compor(comEdicoes);
-    [c.titulo].concat.apply([c.titulo], c.paragrafos.map(function (p) { return p.linhas; })).forEach(function (l) { mapa[l.chave] = l; });
+  P._registrarOrdem = function () {
+    this._ordem = linhasEmOrdem(this._compor(false)).map(function (l) { return l.chave; });
+  };
+
+  P._linhas = function (comEdicoes, semLivres) {
+    var mapa = {};
+    linhasEmOrdem(this._compor(comEdicoes, semLivres)).forEach(function (l) { mapa[l.chave] = l; });
     return mapa;
   };
 
   P.compor = function () { return this._compor(true); };
 
-  P._compor = function (comEdicoes) {
+  P._compor = function (comEdicoes, semLivres) {
     var E = this.estado, m = this.mascara(), self = this;
 
     function linhaMascara(id, texto) {
@@ -891,25 +1093,29 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     if (conc.length) paragrafos.push({ tipo: 'conclusao', linhas: conc });
     if (notas.length) paragrafos.push({ tipo: 'notas', linhas: notas });
 
-    // Valores, edições, pendências
-    var todas = [titulo];
-    paragrafos.forEach(function (p) { todas.push.apply(todas, p.linhas); });
-    var pend = {}, ordemPend = [];
-    // Campos da máscara que estão no laudo (linha presente e não editada à mão): só eles
-    // alimentam os calculados da máscara.
-    var vivos = {}, DA_MASCARA = { titulo: 1, mascara: 1, tituloConclusao: 1, normal: 1 };
+    // Edições à mão: o conteúdo da linha vem das partes (os campos que ficaram continuam campos);
+    // partes vazias = linha apagada (fica no laudo como marca, sem texto).
+    var todas = linhasEmOrdem({ titulo: titulo, paragrafos: paragrafos });
     todas.forEach(function (l) {
-      var ed = comEdicoes && l.editavel !== false && E.edicoes[l.chave];
-      if (ed && ed.base === l.base) {
-        l.editada = true;
-        l.segs = [{ t: 'txt', v: ed.texto }];
-        return;
-      }
       l.editada = false;
-      if (DA_MASCARA[l.tipo]) l.segs.forEach(function (s) { if (s.t === 'campo' && s.tipo === 'valor') vivos[s.chave] = true; });
+      var ed = comEdicoes && l.editavel !== false && E.edicoes[l.chave];
+      if (!ed || ed.base !== l.base) return;
+      l.editada = true;
+      if (partesVazias(ed.partes)) { l.removida = true; l.segs = []; }
+      else l.segs = self._segsDePartes(ed.partes);
+    });
+    if (!semLivres && E.livres.length) inserirLivres(self, paragrafos);
+
+    // Valores, pendências
+    todas = linhasEmOrdem({ titulo: titulo, paragrafos: paragrafos });
+    var pend = {}, ordemPend = [];
+    // Campos da máscara que estão no laudo (em alguma linha presente): só eles alimentam os
+    // calculados da máscara. Linha trocada por achado, ou editada sem o campo, deixa de contar.
+    var vivos = {};
+    todas.forEach(function (l) {
+      l.segs.forEach(function (s) { if (s.t === 'campo' && s.tipo === 'valor' && (!s.escopo || s.escopo === 'mascara')) vivos[s.chave] = true; });
     });
     todas.forEach(function (l) {
-      if (l.editada) return;
       preencher(l.segs, self, vivos);
       l.segs.forEach(function (s) {
         if (s.t === 'campo' && s.pendente) {
@@ -947,6 +1153,43 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
       }
     }
     return padrao;
+  }
+
+  // Põe as linhas escritas à mão junto da âncora (na ordem em que foram criadas: a mais nova
+  // fica colada na âncora). Âncora "T" (título): parágrafo próprio logo depois do título.
+  // "quebra": a linha abre parágrafo; o que vem depois dela no parágrafo vai junto.
+  function inserirLivres(self, paragrafos) {
+    var faltam = self.estado.livres.slice(), cabeca = null, avancou = true;
+    function onde(chave) {
+      if (chave === 'T') return { t: true };
+      for (var p = 0; p < paragrafos.length; p++) {
+        for (var i = 0; i < paragrafos[p].linhas.length; i++) if (paragrafos[p].linhas[i].chave === chave) return { p: p, i: i };
+      }
+      return null;
+    }
+    function noComeco(l) {
+      if (!cabeca) { cabeca = { tipo: 'corpo', linhas: [] }; paragrafos.unshift(cabeca); }
+      cabeca.linhas.unshift(l);
+    }
+    while (faltam.length && avancou) {
+      avancou = false;
+      faltam = faltam.filter(function (f) {
+        var w = onde(f.ancora);
+        if (!w) return true;
+        var l = self._linhaLivre(f);
+        if (w.t) noComeco(l);
+        else paragrafos[w.p].linhas.splice(f.pos === 'antes' ? w.i : w.i + 1, 0, l);
+        avancou = true;
+        return false;
+      });
+    }
+    faltam.forEach(function (f) { noComeco(self._linhaLivre(f)); }); // âncora perdida: não some
+    for (var p = 0; p < paragrafos.length; p++) {
+      var ls = paragrafos[p].linhas;
+      for (var i = 1; i < ls.length; i++) {
+        if (ls[i].quebra) { paragrafos.splice(p + 1, 0, { tipo: paragrafos[p].tipo, linhas: ls.splice(i) }); break; }
+      }
+    }
   }
 
   function escopar(segs, escopo) {
@@ -998,29 +1241,67 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
 
   function textoLinha(l) { return textoSegs(l.segs); }
 
+  function linhasEmOrdem(c) {
+    var r = [c.titulo];
+    c.paragrafos.forEach(function (p) { r.push.apply(r, p.linhas); });
+    return r;
+  }
+
+  // Linha que entra na cópia: tem texto (um "-" sozinho, item vazio, não conta).
+  function temConteudo(t) { t = String(t == null ? '' : t); return t.trim() !== '' && !/^\s*-\s*$/.test(t); }
+
   function textoPuro(c) {
     var partes = [textoLinha(c.titulo)];
     c.paragrafos.forEach(function (p) {
-      partes.push(p.linhas.map(textoLinha).filter(function (t) { return t.trim() !== ''; }).join('\n'));
+      partes.push(p.linhas.map(textoLinha).filter(temConteudo).join('\n'));
     });
     return partes.filter(function (t) { return t.trim() !== ''; }).join('\n\n');
   }
 
   var FONTE = 'font-family:Calibri,Carlito,sans-serif;';
-  function html(c) {
-    function linhaHtml(l) {
-      var h = escHtml(textoLinha(l)).replace(/\n/g, '<br>');
-      return l.negrito ? '<b>' + h + '</b>' : h;
-    }
-    // Um bloco só, com <br> entre linhas e linha em branco entre parágrafos: é o que
-    // editores de laudo na web preservam (margens de <p> costumam ser descartadas ao colar).
-    function par(linhas, tam) {
-      var corpo = linhas.filter(function (l) { return textoLinha(l).trim() !== ''; }).map(linhaHtml).join('<br>');
-      return corpo ? '<span style="' + FONTE + 'font-size:' + tam + '">' + corpo + '</span>' : '';
-    }
-    var partes = [par([c.titulo], '12pt')];
-    c.paragrafos.forEach(function (p) { partes.push(par(p.linhas, '11pt')); });
+  // grupos: [{ tam: '12pt'|'11pt', linhas: [{ texto, negrito }] }], um por parágrafo.
+  // Um bloco só, com <br> entre linhas e linha em branco entre parágrafos: é o que
+  // editores de laudo na web preservam (margens de <p> costumam ser descartadas ao colar).
+  function htmlGrupos(grupos) {
+    var partes = grupos.map(function (g) {
+      var corpo = g.linhas.filter(function (x) { return temConteudo(x.texto); }).map(function (x) {
+        var h = escHtml(x.texto).replace(/\n/g, '<br>');
+        return x.negrito ? '<b>' + h + '</b>' : h;
+      }).join('<br>');
+      return corpo ? '<span style="' + FONTE + 'font-size:' + g.tam + '">' + corpo + '</span>' : '';
+    });
     return '<div style="' + FONTE + 'font-size:11pt">' + partes.filter(Boolean).join('<br><br>') + '</div>';
+  }
+
+  function html(c) {
+    var g = function (linhas, tam) {
+      return { tam: tam, linhas: linhas.map(function (l) { return { texto: textoLinha(l), negrito: !!l.negrito }; }) };
+    };
+    return htmlGrupos([g([c.titulo], '12pt')].concat(c.paragrafos.map(function (p) { return g(p.linhas, '11pt'); })));
+  }
+
+  // Trecho da composição entre ini e fim ({ chave, pos }): { texto, html } com os campos
+  // trocados pelos valores (vazio = "*" ou "a/b"), parágrafos como na cópia inteira.
+  function trecho(c, ini, fim) {
+    var lista = [{ l: c.titulo, p: -1 }];
+    c.paragrafos.forEach(function (p, pi) { p.linhas.forEach(function (l) { lista.push({ l: l, p: pi }); }); });
+    var idx = function (x) { for (var i = 0; x && i < lista.length; i++) if (lista[i].l.chave === x.chave) return i; return -1; };
+    var i0 = idx(ini), i1 = idx(fim), t;
+    if (i0 < 0 || i1 < 0) return null;
+    if (i0 > i1 || (i0 === i1 && ini.pos > fim.pos)) { t = ini; ini = fim; fim = t; t = i0; i0 = i1; i1 = t; }
+    var grupos = [], atual = null;
+    for (var k = i0; k <= i1; k++) {
+      var x = lista[k], n = tamanhoSegs(x.l.segs);
+      var a = k === i0 ? limitar(ini.pos, n) : 0, b = k === i1 ? limitar(fim.pos, n) : n;
+      var txt = textoSegs(fatiarSegs(x.l.segs, a, b));
+      if (x.l.removida || !temConteudo(txt)) continue;
+      if (!atual || atual.p !== x.p) { atual = { p: x.p, tam: x.p < 0 ? '12pt' : '11pt', linhas: [] }; grupos.push(atual); }
+      atual.linhas.push({ texto: txt, negrito: !!x.l.negrito });
+    }
+    return {
+      texto: grupos.map(function (g) { return g.linhas.map(function (y) { return y.texto; }).join('\n'); }).join('\n\n'),
+      html: htmlGrupos(grupos)
+    };
   }
 
   P.textoPuro = function () { return textoPuro(this.compor()); };
@@ -1042,6 +1323,13 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     textoSegs: textoSegs,
     textoPuro: textoPuro,
     html: html,
+    trecho: trecho,
+    linhasEmOrdem: linhasEmOrdem,
+    temConteudo: temConteudo,
+    normalizarPartes: normalizarPartes,
+    partesDeSegs: partesDeSegs,
+    tamanhoSegs: tamanhoSegs,
+    fatiarSegs: fatiarSegs,
     grupoVisivel: grupoVisivel,
     ehRotulo: ehRotulo,
     escHtml: escHtml
@@ -1058,13 +1346,13 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
   var esc = M.escHtml;
   var $ = function (id) { return document.getElementById(id); };
   var CHAVE_PREFS = 'isodens-usg:prefs';
-  var LAPIS = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M11.3 2.3a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1 0 1.4L5.5 12.9 2.5 13.5l.6-3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+  var DESFAZER = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3 2.5 6l3 3M3 6h6.5a4 4 0 0 1 0 8H7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ZW = '​'; // segura o cursor ao lado de um campo no começo/fim da linha; não entra no texto
 
   var prefs = lerPrefs();
   var cat = null, laudo = null;
   var busca = '';
   var escolhaAberta = null; // id do campo de escolha reaberto para troca
-  var editando = null;      // { chave, texto }
   var copiadoEm = null;
   var timerAviso = null;
 
@@ -1090,8 +1378,7 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
   }
   function zerarTela() {
     busca = ''; $('busca').value = '';
-    escolhaAberta = null; editando = null; copiadoEm = null;
-    $('textoExtra').value = ''; $('conclusaoExtra').value = '';
+    escolhaAberta = null; copiadoEm = null;
     $('rolagemFolha').scrollTop = 0; $('achados').scrollTop = 0;
   }
 
@@ -1103,6 +1390,7 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
   }
   function capturarFoco() {
     var a = document.activeElement;
+    if (a && a === $('folha')) { var s = selecao(); return s ? { cursor: { chave: s.fim.chave, pos: s.fim.pos } } : null; }
     var f = a && a.getAttribute && a.getAttribute('data-f');
     if (!f) return null;
     var r = { f: f };
@@ -1111,6 +1399,7 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
   }
   function restaurarFoco(r) {
     if (!r) return null;
+    if (r.cursor) return colocarCursor(r.cursor.chave, r.cursor.pos, true) ? $('folha') : null;
     var el = acharF(r.f);
     if (!el) return null;
     if (el !== document.activeElement) el.focus({ preventScroll: true });
@@ -1122,7 +1411,6 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     if (el) el.focus({ preventScroll: true });
     return el && document.activeElement === el ? el : null;
   }
-  function focarLinha(chave) { return focar('des:' + chave) || focar('lap:' + chave); }
 
   function render() {
     var foco = capturarFoco();
@@ -1413,49 +1701,289 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     clearTimeout(timerDestaque);
     timerDestaque = setTimeout(function () { el.classList.remove('piscar'); }, 1400);
   }
+  // Só rola o painel: o cursor fica onde o clique o pôs.
   function aoClicarLinha(e) {
-    if (e.target.closest('.campo, button, input, textarea')) return;
+    if (e.target.closest('.campo, button, input, textarea, [data-ilha]')) return;
+    var sel = window.getSelection();
+    if (sel && !sel.isCollapsed) return; // terminou uma seleção com o mouse
     var l = e.target.closest('.linha');
-    if (!l || l.classList.contains('editando')) return;
+    if (!l) return;
     var f = faixaDaLinha(l.getAttribute('data-chave'), l.getAttribute('data-origem'));
     if (!f) return;
     if (busca) { busca = ''; $('busca').value = ''; renderAchados(); }
     mostrarFaixa(f);
   }
 
-  // ---------- folha ----------
+  // ---------- folha: um documento editável ----------
+  // A folha é uma região contenteditable só. Cada .linha leva a chave do motor (data-chave); os
+  // campos são ilhas não editáveis ([data-ilha], com data-escopo/data-chave); a marca de margem
+  // é [data-nc]. Digitar não redesenha: o conteúdo da linha vai ao motor (editarLinha com
+  // partes) e só a marca, as ilhas e o rodapé se atualizam. Enter, juntar linhas, colar várias
+  // linhas e apagar entre linhas passam pelo motor e redesenham, com o cursor onde ele diz.
+  var assin = new WeakMap();       // linha -> partes (JSON) que o motor já tem
+  var assinDesenho = new WeakMap(); // linha -> partes (JSON) no último desenho
+  var chavesDesenhadas = [];
+  var compondoIme = false;
+  var desfazer = { bloqueado: true, desfeitos: 0 }; // Ctrl+Z nativo só até o último desenho
+
   function renderFolha() {
+    var folha = $('folha');
     if (!cat) {
-      $('folha').innerHTML = '<p class="aviso-vazio">Nenhum dado de laudo embutido. Rode <b>node montar.js</b> para gerar o programa.</p>';
+      folha.removeAttribute('contenteditable');
+      folha.innerHTML = '<p class="aviso-vazio">Nenhum dado de laudo embutido. Rode <b>node montar.js</b> para gerar o programa.</p>';
       $('rodape').innerHTML = '';
       return;
     }
+    if (folha.getAttribute('contenteditable') !== 'true') folha.setAttribute('contenteditable', 'true');
     var c = laudo.compor();
     var h = '<div class="par titulo">' + linhaHtml(c.titulo) + '</div>';
     c.paragrafos.forEach(function (p) { h += '<div class="par ' + p.tipo + '">' + p.linhas.map(linhaHtml).join('') + '</div>'; });
-    $('folha').innerHTML = h;
+    folha.innerHTML = h;
+    chavesDesenhadas = [];
+    linhasDom().forEach(function (el) {
+      chavesDesenhadas.push(el.getAttribute('data-chave'));
+      var sig = JSON.stringify(lerPartes(el));
+      assin.set(el, sig); assinDesenho.set(el, sig);
+    });
+    desfazer.bloqueado = true; desfazer.desfeitos = 0;
     renderRodape(c);
   }
 
   function linhaHtml(l) {
     var ch = esc(l.chave);
-    var cls = 'linha' + (l.alterada ? ' alterada' : '') + (l.editada ? ' editada' : '') + (l.negrito ? ' negrito' : '') + (l.editavel === false ? ' fixa' : '');
+    var cls = 'linha' + (l.alterada ? ' alterada' : '') + (l.editada || l.livre ? ' manual' : '') + (l.negrito ? ' negrito' : '') + (l.removida ? ' removida' : '');
     var attrs = ' data-chave="' + ch + '"' + (l.origem ? ' data-origem="' + esc(l.origem) + '"' : '');
-    if (editando && editando.chave === l.chave) {
-      return '<div class="' + cls + ' editando"' + attrs + '>' +
-        '<textarea class="edicao" rows="1" data-f="ed:' + ch + '" aria-label="Editar linha (Enter salva, Esc cancela)">' + esc(editando.texto) + '</textarea>' +
-        '<span class="ed-acoes"><button type="button" class="mini" data-acao="salvar-edicao">Salvar</button>' +
-        '<button type="button" class="mini sutil" data-acao="cancelar-edicao">Cancelar</button></span></div>';
+    if (l.removida || l.editavel === false) attrs += ' contenteditable="false"';
+    return '<div class="' + cls + '"' + attrs + '>' + marcaHtml(l) + (l.removida ? '' : corpoHtml(l.segs, l.chave)) + '</div>';
+  }
+
+  // Linha gerada que foi editada (ou apagada): marca na margem com "desfazer".
+  function marcaHtml(l) {
+    if (!l.editada) return '';
+    var t = l.removida ? 'Linha apagada: trazer de volta' : 'Editada à mão: voltar ao texto gerado';
+    return '<span class="marca" contenteditable="false" data-nc="1"><button type="button" class="desfazer" data-acao="desfazer" data-f="des:' + esc(l.chave) + '" title="' + t + '" aria-label="' + t + '">' + DESFAZER + '</button></span>';
+  }
+
+  function corpoHtml(segs, chave) {
+    var h = '', depoisIlha = true;
+    segs.forEach(function (s, i) {
+      if (s.t !== 'campo') {
+        var v = s.v == null ? '' : String(s.v);
+        if (v !== '') { h += esc(v); depoisIlha = false; }
+        return;
+      }
+      if (depoisIlha) h += ZW;
+      h += '<span class="ilha" contenteditable="false" data-ilha="1" data-escopo="' + esc(s.escopo) + '" data-chave="' + esc(s.chave) + '">' + segHtml(s, chave + ':' + i) + '</span>';
+      depoisIlha = true;
+    });
+    if (depoisIlha) h += ZW; // termina num campo, ou linha vazia
+    return h;
+  }
+
+  // ---------- folha: DOM <-> motor ----------
+  function linhasDom() { return [].slice.call($('folha').querySelectorAll('.linha')); }
+  function linhasEditaveis() { return linhasDom().filter(function (x) { return x.getAttribute('contenteditable') !== 'false'; }); }
+  function linhaEl(chave) { return linhasDom().filter(function (x) { return x.getAttribute('data-chave') === chave; })[0] || null; }
+  function ehIlha(n) { return n.nodeType === 1 && n.hasAttribute('data-ilha'); }
+  function ehFora(n) { return n.nodeType === 1 && (n.hasAttribute('data-nc') || n.tagName === 'BR'); }
+  function semZw(s) { return s.replace(/​/g, ''); }
+  function indice(n) { var i = 0; while ((n = n.previousSibling)) i++; return i; }
+
+  // Conteúdo da linha como o motor entende: textos e { escopo, chave } dos campos.
+  function lerPartes(el) {
+    var r = [];
+    (function andar(n) {
+      for (var c = n.firstChild; c; c = c.nextSibling) {
+        if (c.nodeType === 3) r.push(semZw(c.data).replace(/ /g, ' '));
+        else if (c.nodeType !== 1 || ehFora(c)) continue;
+        else if (ehIlha(c)) r.push({ escopo: c.getAttribute('data-escopo'), chave: c.getAttribute('data-chave') });
+        else andar(c);
+      }
+    })(el);
+    return M.normalizarPartes(r);
+  }
+
+  // Tamanho em unidades do motor: 1 por caractere, 1 por campo.
+  function unidades(n) {
+    if (n.nodeType === 3) return semZw(n.data).length;
+    if (n.nodeType === 1 && ehFora(n)) return 0;
+    if (n.nodeType === 1 && ehIlha(n)) return 1;
+    var t = 0;
+    for (var c = n.firstChild; c; c = c.nextSibling) t += unidades(c);
+    return t;
+  }
+
+  function posNaLinha(linha, node, offset) {
+    var r = document.createRange();
+    r.setStart(linha, 0);
+    try { r.setEnd(node, offset); } catch (e) { return 0; }
+    return unidades(r.cloneContents()); // ilha cortada conta inteira (ponto de fim)
+  }
+
+  // Ponto DOM para a posição pos da linha (sempre num nó de texto quando há).
+  function acharPonto(linha, pos) {
+    var resta = pos, ult = null, achado = null;
+    (function andar(n) {
+      for (var c = n.firstChild; c && !achado; c = c.nextSibling) {
+        if (c.nodeType === 3) {
+          ult = c;
+          var d = c.data, k = 0, i = 0;
+          for (; i < d.length && k < resta; i++) if (d.charAt(i) !== ZW) k++;
+          if (k === resta) { achado = { node: c, offset: i }; return; }
+          resta -= k;
+        } else if (c.nodeType === 1 && !ehFora(c)) {
+          if (ehIlha(c)) { if (resta === 0) { achado = { node: n, offset: indice(c) }; return; } resta -= 1; }
+          else andar(c);
+        }
+      }
+    })(linha);
+    return achado || (ult ? { node: ult, offset: ult.data.length } : { node: linha, offset: linha.childNodes.length });
+  }
+
+  // Ponto DOM -> { linha, chave, pos }. Dentro de campo: antes dele (início) ou depois (fim).
+  // Fora de linha editável: a próxima linha (início) ou a anterior (fim).
+  function ponto(node, offset, ehFim) {
+    var folha = $('folha');
+    if (!node || !folha.contains(node)) return null;
+    var el = node.nodeType === 1 ? node : node.parentNode;
+    var linha = el.closest('.linha');
+    if (linha && linha.getAttribute('contenteditable') !== 'false') {
+      var ilha = el.closest('[data-ilha]');
+      if (ilha && linha.contains(ilha) && !ehFim) { node = ilha.parentNode; offset = indice(ilha); }
+      return { linha: linha, chave: linha.getAttribute('data-chave'), pos: posNaLinha(linha, node, offset) };
     }
-    var corpo = l.segs.map(function (s, i) { return segHtml(s, l.chave + ':' + i); }).join('');
-    if (!corpo) corpo = '<span class="vazia">(linha apagada)</span>';
-    var ferr = '';
-    if (l.editavel !== false) {
-      ferr = '<span class="ferr">' +
-        (l.editada ? '<span class="tag">editada</span><button type="button" class="mini" data-acao="desfazer" data-f="des:' + ch + '" title="Voltar ao texto original">desfazer</button>' : '') +
-        '<button type="button" class="lapis" data-acao="editar" data-f="lap:' + ch + '" aria-label="Editar linha" title="Editar linha (duplo clique)">' + LAPIS + '</button></span>';
+    var r = document.createRange();
+    try { r.setStart(node, offset); } catch (e) { return null; }
+    r.collapse(true);
+    var ls = linhasEditaveis(), i;
+    if (!ehFim) {
+      for (i = 0; i < ls.length; i++) if (r.comparePoint(ls[i], 0) >= 0) return { linha: ls[i], chave: ls[i].getAttribute('data-chave'), pos: 0 };
+    } else {
+      for (i = ls.length - 1; i >= 0; i--) if (r.comparePoint(ls[i], ls[i].childNodes.length) <= 0) return { linha: ls[i], chave: ls[i].getAttribute('data-chave'), pos: unidades(ls[i]) };
     }
-    return '<div class="' + cls + '"' + attrs + '><span class="lt">' + corpo + '</span>' + ferr + '</div>';
+    return null;
+  }
+
+  function selecao() {
+    var s = window.getSelection();
+    if (!s || !s.rangeCount) return null;
+    var r = s.getRangeAt(0);
+    var ini = ponto(r.startContainer, r.startOffset, false);
+    var fim = r.collapsed ? ini : ponto(r.endContainer, r.endOffset, true);
+    if (!ini || !fim) return null;
+    var ls = linhasDom(), a = ls.indexOf(ini.linha), b = ls.indexOf(fim.linha);
+    if (b < a || (a === b && fim.pos < ini.pos)) fim = ini; // seleção só dentro de linha apagada
+    // terminar no começo de uma linha (clique triplo) não pega nada dela: fica no fim da anterior
+    if (fim.pos === 0 && fim.chave !== ini.chave) {
+      var ant = vizinha(fim.linha, -1);
+      if (ant && ls.indexOf(ant) >= a) fim = { linha: ant, chave: ant.getAttribute('data-chave'), pos: unidades(ant) };
+    }
+    // nativa: a seleção (ou o cursor) está de fato dentro de uma linha só, e o navegador pode
+    // digitar/apagar ali sem mexer na estrutura (pode estar entre parágrafos, ou pegar a quebra)
+    var nativa = ini.chave === fim.chave && ini.linha.contains(r.startContainer) && ini.linha.contains(r.endContainer);
+    return { ini: ini, fim: fim, colapsada: ini.chave === fim.chave && ini.pos === fim.pos, nativa: nativa };
+  }
+
+  function colocarCursor(chave, pos, semRolar) {
+    var linha = linhaEl(chave), folha = $('folha');
+    if (!linha) return false;
+    if (linha.getAttribute('contenteditable') === 'false') {
+      // linha que acabou de ser apagada: fim da anterior (ou começo da seguinte)
+      var ls = linhasDom(), i = ls.indexOf(linha), j;
+      for (j = i - 1; j >= 0 && ls[j].getAttribute('contenteditable') === 'false'; j--);
+      if (j >= 0) { linha = ls[j]; pos = unidades(linha); }
+      else {
+        for (j = i + 1; j < ls.length && ls[j].getAttribute('contenteditable') === 'false'; j++);
+        if (j >= ls.length) return false;
+        linha = ls[j]; pos = 0;
+      }
+    }
+    var p = acharPonto(linha, pos);
+    if (document.activeElement !== folha) folha.focus({ preventScroll: true });
+    var s = window.getSelection();
+    s.removeAllRanges();
+    var r = document.createRange();
+    r.setStart(p.node, p.offset); r.collapse(true);
+    s.addRange(r);
+    if (!semRolar) rolarPara(linha);
+    return true;
+  }
+
+  function redesenharCom(cur) {
+    renderFolha();
+    if (cur) colocarCursor(cur.chave, cur.pos);
+  }
+
+  // Passa ao motor o que mudou nas linhas. Devolve true se o DOM saiu do formato (linha
+  // sumida ou duplicada, texto fora de linha): aí é preciso redesenhar.
+  function sincronizar() {
+    if (!cat || compondoIme) return false;
+    var vistas = {}, mudou = false, torta = false;
+    linhasDom().forEach(function (el) {
+      var ch = el.getAttribute('data-chave');
+      if (!ch || vistas[ch] || (el.parentNode && el.parentNode.closest('.linha'))) { torta = true; return; }
+      vistas[ch] = true;
+      if (el.getAttribute('contenteditable') === 'false') return;
+      var sig = JSON.stringify(lerPartes(el));
+      if (sig === assin.get(el)) return;
+      assin.set(el, sig);
+      laudo.editarLinha(ch, JSON.parse(sig));
+      mudou = true;
+    });
+    if (chavesDesenhadas.some(function (ch) { return !vistas[ch]; })) torta = true;
+    if (!torta && textoSolto()) torta = true;
+    if (mudou) atualizarMarcas();
+    return torta;
+  }
+
+  function textoSolto() {
+    var w = document.createTreeWalker($('folha'), NodeFilter.SHOW_TEXT, null);
+    for (var n = w.nextNode(); n; n = w.nextNode()) if (semZw(n.data).trim() && !n.parentNode.closest('.linha')) return true;
+    return false;
+  }
+
+  function curarFolha() {
+    var s = selecao();
+    redesenharCom(s ? { chave: s.fim.chave, pos: s.fim.pos } : null);
+  }
+
+  // Depois de digitar: marca de editada, negrito de rótulo, campos calculados e rodapé, sem
+  // tocar no texto (o cursor não se mexe).
+  function atualizarMarcas() {
+    var c = laudo.compor(), mapa = {};
+    M.linhasEmOrdem(c).forEach(function (l) { mapa[l.chave] = l; });
+    linhasEditaveis().forEach(function (el) {
+      var l = mapa[el.getAttribute('data-chave')];
+      if (!l) return;
+      var manual = !!(l.editada || l.livre);
+      if (el.classList.contains('manual') !== manual) el.classList.toggle('manual', manual);
+      if (el.classList.contains('negrito') !== !!l.negrito) el.classList.toggle('negrito', !!l.negrito);
+      var m = null;
+      for (var k = el.firstChild; k; k = k.nextSibling) if (k.nodeType === 1 && k.hasAttribute('data-nc')) { m = k; break; }
+      if (l.editada && !m) el.insertAdjacentHTML('afterbegin', marcaHtml({ chave: l.chave, editada: true }));
+      else if (!l.editada && m) el.removeChild(m);
+    });
+    atualizarIlhas(c);
+    renderRodape(c);
+  }
+
+  function atualizarIlhas(c) {
+    var mapa = {};
+    M.linhasEmOrdem(c).forEach(function (l) {
+      l.segs.forEach(function (s) { if (s.t === 'campo') { var k = s.escopo + '|' + s.chave; if (!mapa[k]) mapa[k] = s; } });
+    });
+    [].forEach.call($('folha').querySelectorAll('[data-ilha]'), function (il) {
+      var s = mapa[il.getAttribute('data-escopo') + '|' + il.getAttribute('data-chave')], a = il.firstElementChild;
+      if (!s || !a) return;
+      if (s.tipo === 'calc') {
+        var txt = temValor(s) ? s.valor : '*';
+        if (a.textContent !== txt) a.textContent = txt;
+        a.classList.toggle('pendente', !temValor(s));
+      } else if (s.tipo === 'valor' && a.tagName === 'INPUT') {
+        if (a !== document.activeElement && a.value !== (s.valor || '')) a.value = s.valor || '';
+        a.classList.toggle('pendente', !!s.pendente);
+      }
+    });
   }
 
   function tamanho(v) { return Math.max(3, String(v || '').length + 1); }
@@ -1530,37 +2058,6 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     if (raiz) focarCampo(raiz);
   }
 
-  // ---------- edição de linha ----------
-  function linhaPorChave(chave) {
-    var c = laudo.compor(), todas = [c.titulo];
-    c.paragrafos.forEach(function (p) { todas = todas.concat(p.linhas); });
-    return todas.filter(function (l) { return l.chave === chave; })[0] || null;
-  }
-  function abrirEdicao(chave) {
-    var l = linhaPorChave(chave);
-    if (!l || l.editavel === false) return;
-    editando = { chave: chave, texto: M.textoLinha(l) };
-    escolhaAberta = null;
-    renderFolha();
-    var ta = acharF('ed:' + chave);
-    if (ta) { ajustarAltura(ta); ta.focus({ preventScroll: true }); ta.setSelectionRange(ta.value.length, ta.value.length); rolarPara(ta); }
-  }
-  function ajustarAltura(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 2 + 'px'; }
-  function salvarEdicao(refocar) {
-    var e = editando; if (!e) return;
-    editando = null;
-    var l = linhaPorChave(e.chave);
-    if (l && (l.editada || M.textoLinha(l) !== e.texto)) laudo.editarLinha(e.chave, e.texto);
-    renderSoFolha();
-    if (refocar) focarLinha(e.chave);
-  }
-  function cancelarEdicao() {
-    var e = editando; if (!e) return;
-    editando = null;
-    renderSoFolha();
-    focarLinha(e.chave);
-  }
-
   // ---------- cópia ----------
   function hora() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
 
@@ -1600,7 +2097,7 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
 
   function copiar() {
     if (!cat) return;
-    if (editando) salvarEdicao(false);
+    if (sincronizar()) curarFolha();
     var c = laudo.compor(), html = M.html(c), txt = M.textoPuro(c);
     var fim = function (ok) {
       if (ok) {
@@ -1628,7 +2125,7 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     var acao = b.getAttribute('data-acao'), id = b.getAttribute('data-id');
     if (acao === 'categoria' && id !== cat.id) { abrirCategoria(id); render(); focar('cat:' + id); }
     if (acao === 'mascara' && id !== laudo.estado.mascara) {
-      laudo.trocarMascara(id); escolhaAberta = null; editando = null; lembrarMascara(); render(); focar('masc:' + id);
+      laudo.trocarMascara(id); escolhaAberta = null; lembrarMascara(); render(); focar('masc:' + id);
     }
   }
 
@@ -1686,6 +2183,7 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     var acao = b.getAttribute('data-acao');
     if (acao === 'escolher') {
       var fid = b.getAttribute('data-fid'), uid = b.getAttribute('data-escopo');
+      sincronizar();
       laudo.definirValor(uid, b.getAttribute('data-chave'), b.getAttribute('data-valor'));
       escolhaAberta = null;
       renderSoFolha();
@@ -1693,62 +2191,156 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
       if (el) rolarPara(el); else if (uid !== 'mascara') irPara(uid, false);
     } else if (acao === 'abrir-escolha') {
       escolhaAberta = b.getAttribute('data-fid');
+      sincronizar();
       renderFolha();
       focar('c:' + escolhaAberta);
-    } else if (acao === 'editar') {
-      abrirEdicao(b.closest('.linha').getAttribute('data-chave'));
     } else if (acao === 'desfazer') {
       var ch = b.closest('.linha').getAttribute('data-chave');
+      sincronizar();
       laudo.desfazerEdicao(ch);
-      renderSoFolha(); focarLinha(ch);
-    } else if (acao === 'salvar-edicao') {
-      salvarEdicao(true);
-    } else if (acao === 'cancelar-edicao') {
-      cancelarEdicao();
+      renderSoFolha();
+      var l = linhaEl(ch);
+      if (l) colocarCursor(ch, unidades(l), true);
     }
-  }
-
-  function aoDuploClique(e) {
-    if (e.target.closest('.campo, button, input, textarea')) return;
-    var l = e.target.closest('.linha');
-    if (!l || l.classList.contains('fixa') || l.classList.contains('editando')) return;
-    var s = window.getSelection(); if (s) s.removeAllRanges();
-    abrirEdicao(l.getAttribute('data-chave'));
   }
 
   function aoDigitarFolha(e) {
     var t = e.target;
-    if (t.matches('input.campo.valor')) {
+    if (t.matches && t.matches('input.campo.valor')) {
+      sincronizar();
       laudo.definirValor(t.getAttribute('data-escopo'), t.getAttribute('data-chave'), t.value);
       t.size = tamanho(t.value);
       renderSoFolha();
-    } else if (t.matches('textarea.edicao') && editando) {
-      editando.texto = t.value;
-      ajustarAltura(t);
+      return;
+    }
+    if (t !== $('folha') || e.isComposing || compondoIme) return;
+    var tipo = e.inputType || '';
+    if (tipo === 'historyUndo') desfazer.desfeitos++;
+    else if (tipo === 'historyRedo') desfazer.desfeitos--;
+    else { desfazer.bloqueado = false; desfazer.desfeitos = 0; }
+    var torta = sincronizar();
+    // Ctrl+Z voltou ao último desenho: mais para trás o navegador mexeria em nós que não existem mais.
+    if (tipo === 'historyUndo' && linhasDom().every(function (el) { return assin.get(el) === assinDesenho.get(el); })) desfazer.bloqueado = true;
+    if (torta) curarFolha();
+  }
+
+  // Enter, juntar linhas, apagar ou digitar sobre várias linhas: pelo motor. Dentro de uma linha:
+  // o navegador digita (e o Ctrl+Z dele funciona); a sincronização leva ao motor.
+  var NATIVOS = /^(insertText|insertReplacementText|insertCompositionText|delete(Content|Word|SoftLine|HardLine)(Backward|Forward)|deleteEntireSoftLine|deleteByCut|historyUndo|historyRedo)$/;
+  function aoAntesDeDigitar(e) {
+    if (e.target !== $('folha')) return; // campos de digitar cuidam de si
+    var tipo = e.inputType || '';
+    if (tipo === 'insertCompositionText' || e.isComposing) return;
+    if (tipo === 'historyUndo') { if (desfazer.bloqueado) e.preventDefault(); return; }
+    if (tipo === 'historyRedo') { if (desfazer.desfeitos <= 0) e.preventDefault(); return; }
+    var s = selecao();
+    if (!s) { e.preventDefault(); return; }
+    var cur;
+    if (tipo === 'insertParagraph' || tipo === 'insertLineBreak') {
+      e.preventDefault();
+      sincronizar();
+      cur = s.colapsada ? s.ini : laudo.substituirTrecho(s.ini, s.fim, '');
+      redesenharCom((cur && laudo.quebrarLinha(cur.chave, cur.pos)) || cur);
+      return;
+    }
+    if (/^delete/.test(tipo)) {
+      if (!s.colapsada) {
+        if (!s.nativa) { e.preventDefault(); sincronizar(); redesenharCom(laudo.substituirTrecho(s.ini, s.fim, '')); }
+        return;
+      }
+      var tras = /Backward$/.test(tipo);
+      if (tras && s.ini.pos === 0) { e.preventDefault(); juntar(vizinha(s.ini.linha, -1), s.ini.linha); }
+      else if (!tras && s.ini.pos >= unidades(s.ini.linha)) { e.preventDefault(); juntar(s.ini.linha, vizinha(s.ini.linha, 1)); }
+      else if (!s.nativa) e.preventDefault();
+      return;
+    }
+    if (tipo === 'insertText' || tipo === 'insertReplacementText') {
+      var txt = e.data != null ? e.data : (e.dataTransfer ? e.dataTransfer.getData('text/plain') : '');
+      if (!s.nativa) {
+        e.preventDefault(); sincronizar();
+        redesenharCom(laudo.substituirTrecho(s.ini, s.fim, txt || ''));
+      }
+      return;
+    }
+    if (!NATIVOS.test(tipo)) e.preventDefault(); // negrito, listas, soltar... (colar passa pelo evento paste)
+  }
+
+  function vizinha(linha, dir) {
+    var ls = linhasEditaveis(), i = ls.indexOf(linha);
+    return i < 0 ? null : ls[i + dir] || null;
+  }
+  function juntar(cima, baixo) {
+    sincronizar();
+    if (!cima || !baixo) return;
+    var r = laudo.juntarLinhas(cima.getAttribute('data-chave'), baixo.getAttribute('data-chave'));
+    if (r) redesenharCom(r);
+  }
+
+  // Colar: sempre texto puro; quebras de linha viram linhas.
+  function aoColar(e) {
+    var folha = $('folha'), t = e.target && (e.target.nodeType === 1 ? e.target : e.target.parentNode);
+    if (!t || !folha.contains(t) || t.closest('input, textarea')) return;
+    e.preventDefault();
+    var txt = ((e.clipboardData && e.clipboardData.getData('text/plain')) || '').replace(/\r\n?/g, '\n').replace(/​/g, '').replace(/\n+$/, '');
+    var s = selecao();
+    if (!txt || !s) return;
+    if (txt.indexOf('\n') < 0 && s.nativa) {
+      document.execCommand('insertText', false, txt); // pelo navegador: Ctrl+Z desfaz
+      return;
+    }
+    sincronizar();
+    redesenharCom(laudo.substituirTrecho(s.ini, s.fim, txt));
+  }
+
+  // Ctrl+C/Ctrl+X de um trecho: texto puro e HTML como a cópia inteira, campos pelos valores.
+  function aoCopiarTrecho(e) {
+    if (e.defaultPrevented || !cat) return; // "Copiar laudo" usa o próprio evento
+    var folha = $('folha'), a = document.activeElement;
+    if (a && a !== folha && folha.contains(a) && a.matches('input, textarea')) return;
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+    var r = sel.getRangeAt(0);
+    if (!folha.contains(r.startContainer) || !folha.contains(r.endContainer)) return;
+    if (sincronizar()) return;
+    var s = selecao();
+    if (!s || s.colapsada) return;
+    var t = laudo.trecho(s.ini, s.fim);
+    if (!t) return;
+    e.clipboardData.setData('text/plain', t.texto);
+    e.clipboardData.setData('text/html', t.html);
+    e.preventDefault();
+    if (e.type === 'cut') {
+      if (s.nativa) setTimeout(function () { document.execCommand('delete'); }, 0);
+      else redesenharCom(laudo.substituirTrecho(s.ini, s.fim, ''));
     }
   }
 
+  function noDoCursor() {
+    var s = window.getSelection();
+    return s && s.rangeCount && $('folha').contains(s.anchorNode) ? s.anchorNode : null;
+  }
+
   function aoTeclarFolha(e) {
-    var t = e.target;
-    if (t.matches('textarea.edicao')) {
-      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) { e.preventDefault(); salvarEdicao(true); }
-      else if (e.key === 'Escape') { e.preventDefault(); cancelarEdicao(); }
-      return;
-    }
+    var t = e.target, folha = $('folha');
     if (e.key === 'Tab' && !e.ctrlKey && !e.altKey && !e.metaKey) {
-      if (proximoPendente(t, e.shiftKey)) e.preventDefault();
+      if (proximoPendente(t === folha ? (noDoCursor() || folha) : t, e.shiftKey)) e.preventDefault();
     } else if (e.key === 'Enter' && t.matches('input.campo.valor') && !e.ctrlKey && !e.metaKey) {
       e.preventDefault(); proximoPendente(t, false);
     } else if (e.key === 'Escape' && escolhaAberta) {
       var fid = escolhaAberta; escolhaAberta = null; renderFolha(); focar('c:' + fid);
+    } else if (t === folha && (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (e.key === 'a' || e.key === 'A')) {
+      e.preventDefault(); // Ctrl+A: só a folha
+      var r = document.createRange(), s = window.getSelection();
+      r.selectNodeContents(folha); s.removeAllRanges(); s.addRange(r);
+    } else if (t === folha && (e.key === 'Backspace' || e.key === 'Delete') && !e.ctrlKey && !e.altKey) {
+      // Passa por cima do caractere invisível junto dos campos: uma tecla apaga o que se vê.
+      var sel = window.getSelection();
+      if (!sel.isCollapsed || !sel.anchorNode || sel.anchorNode.nodeType !== 3) return;
+      var n = sel.anchorNode, o = sel.anchorOffset;
+      if (e.key === 'Backspace') { while (o > 0 && n.data.charAt(o - 1) === ZW) o--; }
+      else { while (o < n.data.length && n.data.charAt(o) === ZW) o++; }
+      if (o !== sel.anchorOffset) sel.collapse(n, o);
     }
-  }
-
-  function aoSairDaEdicao(e) {
-    if (!e.target.matches('textarea.edicao') || !editando) return;
-    var para = e.relatedTarget;
-    if (para && para.closest && para.closest('.editando')) return; // Salvar/Cancelar cuidam disso
-    salvarEdicao(false);
   }
 
   function aoTeclarGlobal(e) {
@@ -1770,10 +2362,18 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     $('achados').addEventListener('click', aoClicarAchados);
     var folha = $('folha');
     folha.addEventListener('click', aoClicarFolha);
-    folha.addEventListener('dblclick', aoDuploClique);
     folha.addEventListener('input', aoDigitarFolha);
+    folha.addEventListener('beforeinput', aoAntesDeDigitar);
     folha.addEventListener('keydown', aoTeclarFolha);
-    folha.addEventListener('focusout', aoSairDaEdicao);
+    folha.addEventListener('paste', aoColar);
+    folha.addEventListener('compositionstart', function () { compondoIme = true; });
+    folha.addEventListener('compositionend', function () { compondoIme = false; if (sincronizar()) curarFolha(); });
+    // arrastar texto ou campos dentro da folha (ou soltar de fora) não vale: só digitar e colar
+    folha.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    folha.addEventListener('dragover', function (e) { e.preventDefault(); });
+    folha.addEventListener('drop', function (e) { e.preventDefault(); });
+    document.addEventListener('copy', aoCopiarTrecho);
+    document.addEventListener('cut', aoCopiarTrecho);
     document.addEventListener('keydown', aoTeclarGlobal);
 
     $('btnCopiar').addEventListener('click', copiar);
@@ -1789,8 +2389,6 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
         if (b) { e.preventDefault(); b.click(); }
       }
     });
-    $('textoExtra').addEventListener('input', function () { if (!cat) return; laudo.definirTextoExtra(this.value); renderFolha(); });
-    $('conclusaoExtra').addEventListener('input', function () { if (!cat) return; laudo.definirConclusaoExtra(this.value); renderFolha(); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
