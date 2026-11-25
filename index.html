@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<!-- Isodens USG, montado em 2026-11-25 16:17: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
+<!-- Isodens USG, montado em 2026-11-25 16:32: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
@@ -265,6 +265,15 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
 @media (max-width: 1100px) {
   .folha { padding: 20px 40px 22px 22px; }
 }
+
+/* Busca: achado com lado mostra os botões de lado ao lado do nome */
+.res-linha { display: flex; align-items: center; gap: 4px; }
+.res-linha .achado-btn { flex: 1 1 auto; min-width: 0; }
+.res-linha .mini.lado { flex: none; text-transform: capitalize; }
+
+/* Escolha com opções longas (BI-RADS, recomendação) quebra em linhas em vez de estourar a folha */
+.campo.escolha { flex-wrap: wrap; max-width: 100%; row-gap: 2px; white-space: normal; }
+.campo.escolha button { white-space: normal; text-align: left; }
 
 </style>
 </head>
@@ -1676,9 +1685,14 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
         var n = M.normalizar(a.nome);
         if (!termos.every(function (t) { return n.indexOf(t) >= 0; })) return;
         var insts = laudo.instancias(g.id, a.id), on = insts.length > 0, c = g.id + '/' + a.id;
-        h += '<div class="achado' + (on ? ' on' : '') + (a.tipo === 'nota' ? ' nota' : '') + '">' +
+        // Achado com lado (porEscolha): botões para já marcar no lado certo, sem passar pela faixa.
+        var lados = a.porEscolha && typeof a.porEscolha === 'object' ? Object.keys(a.porEscolha) : [];
+        var hl = lados.map(function (k) {
+          return '<button type="button" class="mini lado" data-acao="busca-lado" data-g="' + esc(g.id) + '" data-a="' + esc(a.id) + '" data-k="' + esc(k) + '" data-f="lado:' + esc(c) + ':' + esc(k) + '" title="Marcar à ' + esc(k) + '">' + esc(k) + '</button>';
+        }).join('');
+        h += '<div class="achado' + (on ? ' on' : '') + (a.tipo === 'nota' ? ' nota' : '') + '"><div class="res-linha">' +
           '<button type="button" class="achado-btn" data-acao="alternar" data-g="' + esc(g.id) + '" data-a="' + esc(a.id) + '" data-f="ach:' + esc(c) + '" aria-pressed="' + on + '">' +
-          '<span class="nome">' + esc(a.nome) + '</span><span class="gr">' + esc(g.nome) + '</span>' + (insts.length > 1 ? '<span class="cont">' + insts.length + '</span>' : '') + '</button>' +
+          '<span class="nome">' + esc(a.nome) + '</span><span class="gr">' + esc(g.nome) + '</span>' + (insts.length > 1 ? '<span class="cont">' + insts.length + '</span>' : '') + '</button>' + hl + '</div>' +
           htmlInsts(insts.map(function (i) { return { inst: i, g: g, a: a }; }), null) + '</div>';
       });
     });
@@ -2125,7 +2139,8 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
     var acao = b.getAttribute('data-acao'), id = b.getAttribute('data-id');
     if (acao === 'categoria' && id !== cat.id) { abrirCategoria(id); render(); focar('cat:' + id); }
     if (acao === 'mascara' && id !== laudo.estado.mascara) {
-      laudo.trocarMascara(id); escolhaAberta = null; lembrarMascara(); render(); focar('masc:' + id);
+      // Outra máscara é outro exame: começa limpo, como ao trocar de categoria.
+      abrirCategoria(cat.id, id); render(); focar('masc:' + id);
     }
   }
 
@@ -2155,6 +2170,11 @@ button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
       abertos[fx] = !abertos[fx];
       var fid = b.getAttribute('data-f');
       renderAchados(); focar(fid);
+    } else if (acao === 'busca-lado') {
+      var comLado = laudo.marcar(g, a);
+      if (!comLado) return;
+      preencherLado(comLado, b.getAttribute('data-k'));
+      render(); irPara(comLado, true);
     } else if (acao === 'alternar') {
       var novo = laudo.alternar(g, a);
       render();
