@@ -1,30 +1,50 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<!-- Isodens USG, montado em 2026-11-26 11:27: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
+<!-- Isodens USG, montado em 2026-11-26 11:37: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Isodens USG</title>
 <style>
-/* Isodens USG - visual "papel noturno" */
+/* Isodens USG - visual "papel noturno".
+   Cores com papel fixo: verde = normal · âmbar = achado marcado (igual ao realce da folha) ·
+   violeta = calculadora · azul-petróleo = ação e navegação · vermelho = medida fora da referência. */
 :root {
-  --fundo: #0B0E10;
-  --painel: #15191B;
-  --painel2: #1C2225;
-  --texto: #CBD0CC;
-  --texto2: #929DA0;
-  --linha: #2E383D;
-  --destaque: #6FB3BB;
-  --btn: #22565E;
-  --btn-hover: #2B6972;
-  --sel: #2A3438;
-  --aviso: #E8C877;
-  --papel: #BEB8AB;
-  --papel-texto: #23262A;
-  --realce: #E6CF8E;
+  --fundo: #0C1012;
+  --painel: #14191C;
+  --painel2: #1C2327;
+  --painel3: #242D32;
+  --texto: #E3E8E5;
+  --texto2: #9BA8AC;
+  --texto3: #6F7C80;
+  --linha: #2A353A;
+  --linha2: #3A474D;
+  --destaque: #5FC0CC;
+  --btn: #1D7480;
+  --btn-hover: #248B99;
+  --sel: #263339;
+  --ok: #63C28D;
+  --ok-fundo: rgba(99, 194, 141, .13);
+  --ok-linha: rgba(99, 194, 141, .42);
+  --achado: #F0C255;
+  --achado-fundo: #4B3A10;
+  --achado-fundo2: #5C4814;
+  --achado-linha: #A8842A;
+  --calc: #B3A6F5;
+  --calc-fundo: #2B2850;
+  --calc-fundo2: #38346A;
+  --calc-linha: #6E63C4;
+  --info: #86B9EE;
+  --info-fundo: rgba(134, 185, 238, .08);
+  --aviso: #F0C255;
+  --erro: #F08C7D;
+  --papel: #C9C3B5;
+  --papel-texto: #1F2226;
+  --realce: #EBD48F;
   --realce-texto: #2B2206;
-  --foco-papel: #22565E;
+  --foco-papel: #1D7480;
+  --raio: 7px;
 }
 
 * { box-sizing: border-box; }
@@ -33,341 +53,478 @@ body {
   margin: 0;
   background: var(--fundo);
   color: var(--texto);
-  font: 13px/1.4 "Segoe UI", system-ui, sans-serif;
+  font: 14px/1.4 "Segoe UI", system-ui, -apple-system, sans-serif;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 button { font: inherit; color: inherit; }
+.ic { flex: none; display: block; }
+kbd {
+  display: inline-block; font: 600 11px/16px "Segoe UI", system-ui, sans-serif; color: var(--texto2);
+  background: var(--painel2); border: 1px solid var(--linha2); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; min-width: 18px; text-align: center;
+}
 :focus { outline: none; }
-:focus-visible { outline: 2px solid var(--destaque); outline-offset: 1px; }
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: var(--linha); border-radius: 5px; border: 2px solid transparent; background-clip: padding-box; }
+:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-thumb { background: var(--linha2); border-radius: 6px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: #55656c; border: 3px solid transparent; background-clip: padding-box; }
 ::-webkit-scrollbar-track { background: transparent; }
 
 /* ---------- barra superior ---------- */
 .topo {
-  display: flex; align-items: center; gap: 14px;
-  padding: 0 12px; height: 44px;
+  display: flex; align-items: center; gap: 18px;
+  padding: 0 16px; height: 56px;
   background: var(--painel); border-bottom: 1px solid var(--linha);
   min-width: 0;
 }
-.logo { font-weight: 600; letter-spacing: .02em; color: var(--destaque); white-space: nowrap; font-size: 14px; }
-.categorias { display: flex; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; align-self: stretch; }
+.logo { display: flex; align-items: center; gap: 9px; color: var(--destaque); white-space: nowrap; font-size: 16px; letter-spacing: .01em; }
+.logo span { color: var(--texto); font-weight: 400; }
+.logo b { font-weight: 700; color: var(--destaque); }
+.categorias { display: flex; align-items: center; gap: 2px; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; align-self: stretch; }
 .categorias::-webkit-scrollbar { display: none; }
 .aba {
-  background: none; border: 0; border-bottom: 2px solid transparent;
-  padding: 0 10px; white-space: nowrap; color: var(--texto2); cursor: pointer;
-  transition: color .12s, border-color .12s;
+  --cor: var(--destaque);
+  position: relative; display: inline-flex; align-items: center; gap: 7px; height: 38px;
+  background: none; border: 0; border-radius: var(--raio);
+  padding: 0 12px; white-space: nowrap; color: var(--texto2); cursor: pointer; font-size: 14px;
+  transition: color .12s, background-color .12s;
 }
-.aba:hover { color: var(--texto); }
-.aba[aria-pressed="true"] { color: var(--texto); border-bottom-color: var(--destaque); }
-.aba:focus-visible { outline-offset: -3px; }
-.acoes { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-.aviso-copia { color: var(--texto2); font-size: 12px; opacity: 0; transition: opacity .15s; }
+.aba .ic { color: var(--cor); opacity: .75; transition: opacity .12s; }
+.aba:hover { color: var(--texto); background: var(--painel2); }
+.aba:hover .ic { opacity: 1; }
+.aba[aria-pressed="true"] { color: var(--texto); background: var(--painel3); font-weight: 600; }
+.aba[aria-pressed="true"] .ic { opacity: 1; }
+.aba[aria-pressed="true"]::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: -9px; height: 3px; border-radius: 3px 3px 0 0; background: var(--cor); }
+.aba:focus-visible { outline-offset: -2px; }
+.aba[data-cat="abdome"] { --cor: #F2A65A; }
+.aba[data-cat="cervical-tireoide"] { --cor: #5FC0CC; }
+.aba[data-cat="ginecologia"] { --cor: #EE8FB3; }
+.aba[data-cat="mama"] { --cor: #F08C9B; }
+.aba[data-cat="obstetricia"] { --cor: #B3A6F5; }
+.aba[data-cat="mao"] { --cor: #86B9EE; }
+.aba[data-cat="punho"] { --cor: #7FD1C0; }
+.aba[data-cat="rins-vias-prostata"] { --cor: #E6CC62; }
+.acoes { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.aviso-copia { color: var(--texto2); font-size: 13px; opacity: 0; transition: opacity .15s; }
 .aviso-copia.visivel { opacity: 1; }
 .aviso-copia.alerta { color: var(--aviso); }
 
 .btn {
-  background: var(--painel2); border: 1px solid var(--linha); border-radius: 4px;
-  padding: 5px 12px; cursor: pointer; transition: background-color .12s, border-color .12s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 38px;
+  background: var(--painel2); border: 1px solid var(--linha2); border-radius: var(--raio);
+  padding: 0 14px; cursor: pointer; transition: background-color .12s, border-color .12s, transform .06s;
 }
-.btn:hover { background: var(--sel); }
-.btn.principal { background: var(--btn); border-color: var(--btn-hover); color: #E4EEEC; font-weight: 600; }
+.btn:hover { background: var(--sel); border-color: #4a5a61; }
+.btn:active { transform: translateY(1px); }
+.btn.principal { background: var(--btn); border-color: var(--btn-hover); color: #F1F8F7; font-weight: 600; padding: 0 18px; min-width: 150px; box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 2px 8px rgba(0,0,0,.35); }
 .btn.principal:hover { background: var(--btn-hover); }
+.btn.principal.feito { background: #2C7D52; border-color: #3B9B68; }
 
-/* ---------- máscaras ---------- */
+/* ---------- máscaras (qual exame) ---------- */
 .mascaras {
-  display: flex; flex-wrap: wrap; gap: 4px;
-  padding: 6px 12px; border-bottom: 1px solid var(--linha); background: var(--fundo);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  padding: 9px 16px; border-bottom: 1px solid var(--linha); background: var(--fundo);
 }
+.masc-rot { display: inline-flex; align-items: center; gap: 6px; color: var(--texto3); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-right: 6px; }
 .mascara {
-  background: var(--painel); border: 1px solid var(--linha); border-radius: 4px;
-  padding: 3px 10px; cursor: pointer; color: var(--texto2); transition: background-color .12s, color .12s;
+  height: 32px; background: var(--painel); border: 1px solid var(--linha); border-radius: 16px;
+  padding: 0 14px; cursor: pointer; color: var(--texto2); transition: background-color .12s, color .12s, border-color .12s;
 }
-.mascara:hover { color: var(--texto); background: var(--painel2); }
-.mascara[aria-pressed="true"] { background: var(--sel); color: var(--texto); border-color: var(--destaque); }
+.mascara:hover { color: var(--texto); background: var(--painel2); border-color: var(--linha2); }
+.mascara[aria-pressed="true"] { background: rgba(95, 192, 204, .14); color: #E9F6F7; border-color: var(--destaque); font-weight: 600; }
 
 /* ---------- área principal ---------- */
-.area { display: grid; grid-template-columns: minmax(0, 43fr) minmax(0, 57fr); min-height: 0; }
+.area { display: grid; grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); min-height: 0; }
 .col-achados { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--linha); background: var(--painel); }
 .col-laudo { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 
 /* contexto da paciente (não entra no laudo): chips de um clique no topo do painel */
-.paciente { display: flex; flex-direction: column; gap: 4px; padding: 7px 10px 7px 12px; border-bottom: 1px solid var(--linha); }
+.paciente { display: flex; flex-direction: column; gap: 6px; padding: 10px 14px 11px; border-bottom: 1px solid var(--linha); background: var(--info-fundo); border-left: 3px solid var(--info); }
 .paciente[hidden] { display: none; }
-.pc-dado { display: grid; grid-template-columns: 70px minmax(0, 1fr); column-gap: 8px; align-items: start; }
-.pc-rot { color: var(--texto2); font-size: 12px; line-height: 22px; }
-.pc-ops { display: flex; flex-wrap: wrap; gap: 3px; }
-.pc-aviso { color: var(--aviso); font-size: 12px; padding-left: 78px; }
+.pc-cab { display: flex; align-items: center; gap: 6px; color: var(--info); font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+.pc-cab span { color: var(--texto3); font-weight: 400; letter-spacing: 0; text-transform: none; margin-left: 2px; }
+.pc-dado { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 10px; align-items: start; }
+.pc-rot { color: var(--texto2); font-size: 13px; line-height: 30px; }
+.pc-ops { display: flex; flex-wrap: wrap; gap: 6px; }
+.paciente .chip.on { background: #224668; border-color: var(--info); color: #EAF3FC; }
+.paciente .chip.on:hover { background: #2A547C; }
+.pc-aviso { display: flex; align-items: center; gap: 6px; color: var(--aviso); font-size: 13px; }
 
-.busca { padding: 8px 10px; border-bottom: 1px solid var(--linha); }
+.busca { position: relative; padding: 10px 14px; border-bottom: 1px solid var(--linha); }
+.busca .ic { position: absolute; left: 25px; top: 50%; margin-top: -8px; color: var(--texto3); pointer-events: none; }
+.busca kbd { position: absolute; right: 24px; top: 50%; margin-top: -10px; pointer-events: none; }
 .busca input {
-  width: 100%; background: var(--fundo); color: var(--texto);
-  border: 1px solid var(--linha); border-radius: 4px; padding: 5px 8px; font: inherit;
+  width: 100%; height: 36px; background: var(--fundo); color: var(--texto);
+  border: 1px solid var(--linha2); border-radius: var(--raio); padding: 0 36px 0 34px; font: inherit;
+  transition: border-color .12s, box-shadow .12s;
 }
-.busca input::placeholder { color: var(--texto2); }
-.busca input:focus-visible { outline-offset: 0; border-color: var(--destaque); }
+.busca input::placeholder { color: var(--texto3); }
+.busca input:focus-visible { outline: none; border-color: var(--destaque); box-shadow: 0 0 0 3px rgba(95, 192, 204, .18); }
+.busca input:focus ~ kbd, .busca input:not(:placeholder-shown) ~ kbd { display: none; }
 
-.lista-achados { overflow-y: auto; flex: 1 1 auto; padding: 4px 0 24px; scrollbar-color: var(--linha) transparent; }
-.vazio { color: var(--texto2); padding: 8px 14px; }
+/* resumo do que está marcado */
+.marcados { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 14px; border-bottom: 1px solid var(--linha); background: rgba(240, 194, 85, .05); max-height: 104px; overflow-y: auto; }
+.marcados[hidden] { display: none; }
+.mc-rot { display: inline-flex; align-items: center; gap: 6px; color: var(--achado); font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-right: 2px; }
+.mc-item { display: inline-flex; align-items: stretch; height: 26px; border: 1px solid var(--achado-linha); border-radius: 13px; overflow: hidden; background: rgba(240, 194, 85, .08); max-width: 100%; }
+.mc-item.form { border-color: var(--calc-linha); background: rgba(179, 166, 245, .10); }
+.mc-item.nota { border-color: var(--linha2); background: var(--painel2); }
+.mc-nome { background: none; border: 0; padding: 0 4px 0 11px; cursor: pointer; font-size: 12.5px; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+.mc-nome:hover { text-decoration: underline; text-underline-offset: 2px; }
+.mc-x { display: inline-flex; align-items: center; justify-content: center; width: 26px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--texto2); }
+.mc-x:hover { background: rgba(240, 140, 125, .22); color: #FFD9D2; }
+.mc-nome:focus-visible, .mc-x:focus-visible { outline-offset: -2px; }
+
+.lista-achados { overflow-y: auto; flex: 1 1 auto; padding: 0 0 28px; scrollbar-color: var(--linha2) transparent; }
+.vazio { color: var(--texto2); padding: 14px 16px; }
 
 /* faixas: uma por parágrafo da máscara, na ordem do laudo */
 .faixa {
-  display: grid; grid-template-columns: 104px minmax(0, 1fr); column-gap: 10px;
-  padding: 6px 10px 6px 12px; border-bottom: 1px solid #20282b;
+  display: grid; grid-template-columns: 138px minmax(0, 1fr); column-gap: 12px;
+  padding: 10px 14px 10px 11px; border-bottom: 1px solid var(--linha); border-left: 3px solid transparent;
+  transition: background-color .15s;
 }
+.faixa:hover { background: rgba(255, 255, 255, .018); }
+.faixa.tem { border-left-color: var(--achado); background: rgba(240, 194, 85, .045); }
 .faixa.piscar { animation: piscar 1.4s ease-out; }
-@keyframes piscar { 0%, 35% { background: #1f3b40; } 100% { background: transparent; } }
-.fx-rot { color: var(--texto2); font-size: 12px; line-height: 1.25; padding-top: 4px; overflow-wrap: anywhere; }
+@keyframes piscar { 0%, 35% { background: rgba(95, 192, 204, .22); } 100% { background: transparent; } }
+.fx-rot { display: flex; align-items: flex-start; gap: 7px; color: var(--texto2); font-size: 13.5px; font-weight: 600; line-height: 1.25; padding-top: 7px; min-width: 0; }
+.fx-nome { min-width: 0; overflow-wrap: anywhere; }
+.fx-estado { color: var(--ok); opacity: .8; margin-top: 0; }
 .faixa.tem .fx-rot { color: var(--texto); }
+.faixa.tem .fx-estado { color: var(--achado); opacity: 1; }
 .fx-corpo { min-width: 0; }
-.fx-btns { display: flex; flex-wrap: wrap; gap: 3px; }
+.fx-btns { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: var(--painel2); border: 1px solid var(--linha); border-radius: 3px;
-  padding: 0 8px; line-height: 22px; font-size: 12.5px; cursor: pointer; color: var(--texto); text-align: left;
-  transition: background-color .12s, border-color .12s, color .12s;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 30px;
+  background: var(--painel2); border: 1px solid var(--linha2); border-radius: var(--raio);
+  padding: 3px 11px; line-height: 1.25; font-size: 13.5px; cursor: pointer; color: var(--texto); text-align: left;
+  transition: background-color .12s, border-color .12s, color .12s, transform .06s;
 }
-.chip:hover { background: var(--sel); }
-.chip.on { background: var(--btn); border-color: var(--btn-hover); color: #E8F0EE; }
-.chip.on:hover { background: var(--btn-hover); }
-.chip.on .cont { background: #E4EEEC; color: var(--btn); }
-.chip.normal { background: none; color: var(--texto2); }
+.chip:hover { background: var(--painel3); border-color: #51626a; }
+.chip:active { transform: translateY(1px); }
+/* marcado: âmbar, a mesma cor do realce na folha */
+.chip.on { background: var(--achado-fundo); border-color: var(--achado); color: #FFF3D0; font-weight: 600; }
+.chip.on:hover { background: var(--achado-fundo2); border-color: var(--achado); }
+.chip.on .ic { color: var(--achado); }
+.chip.on .cont { background: var(--achado); color: #2B2206; }
+/* Normal: verde quando é o estado da faixa; apagado (vira "voltar ao normal") quando há achado */
+.chip.normal { background: none; border-color: var(--linha); color: var(--texto2); }
 .chip.normal:hover { color: var(--texto); background: var(--painel2); }
-.chip.normal[aria-pressed="true"] { color: var(--destaque); border-color: #2d4a4f; }
-.chip.mais { background: none; border-style: dashed; color: var(--texto2); }
+.chip.normal[aria-pressed="true"] { color: var(--ok); border-color: var(--ok-linha); background: var(--ok-fundo); font-weight: 600; cursor: default; }
+.chip.normal[aria-pressed="true"]:active { transform: none; }
+.chip.mais { background: none; border-style: dashed; color: var(--texto2); gap: 4px; }
 .chip.mais:hover { color: var(--texto); }
 .chip.nota:not(.on) { color: var(--texto2); }
-.faixa .insts { padding: 5px 0 0; }
-.inome { color: var(--texto); font-size: 12px; font-weight: 600; margin-right: 2px; }
+/* calculadora (TI-RADS, BI-RADS): violeta */
+.chip.form { font-weight: 600; background: var(--calc-fundo); border-color: var(--calc-linha); color: #ECE8FF; }
+.chip.form .ic { color: var(--calc); }
+.chip.form:hover, .chip.form.on:hover { background: var(--calc-fundo2); border-color: var(--calc); }
+.chip.form.on { background: var(--calc-fundo2); border-color: var(--calc); color: #F4F1FF; }
+.chip.form.on .cont { background: var(--calc); color: #1B1840; }
+.faixa .insts { margin-top: 8px; }
+.inome { color: #FFF3D0; font-size: 13px; font-weight: 600; margin-right: 4px; }
 
 .faixa.aux { display: block; padding: 0; }
-.faixa.aux .fx-corpo { padding: 0 10px 8px 12px; }
-.qtd { color: #6f7a7d; letter-spacing: 0; margin-left: 4px; }
+.faixa.aux .fx-corpo { padding: 0 14px 12px 14px; }
+.qtd { color: var(--texto3); letter-spacing: 0; margin-left: 4px; font-weight: 400; }
 
-.resultados { padding: 2px 6px; }
-.achado-btn .gr { color: var(--texto2); font-size: 11.5px; white-space: nowrap; }
+.resultados { padding: 6px 8px; }
+.achado-btn .gr { color: var(--texto2); font-size: 12px; white-space: nowrap; }
 .achado.on .achado-btn .gr { font-weight: normal; }
 
 .grupo-cab {
-  display: flex; align-items: center; gap: 8px; width: 100%;
+  display: flex; align-items: center; gap: 8px; width: 100%; min-height: 40px;
   background: none; border: 0; text-align: left; cursor: pointer;
-  padding: 6px 12px 5px; color: var(--texto2); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase;
+  padding: 0 14px; color: var(--texto2); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
 }
-.grupo-cab:hover { color: var(--texto); }
+.grupo-cab:hover { color: var(--texto); background: rgba(255, 255, 255, .025); }
 .grupo-cab:focus-visible { outline-offset: -2px; }
-.seta { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid currentColor; transition: transform .12s; flex: none; }
-.faixa.fechado .seta { transform: rotate(-90deg); }
+.seta { display: inline-flex; transition: transform .12s; flex: none; transform: rotate(90deg); }
+.faixa.fechado .seta { transform: none; }
 .gnome { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cont {
-  display: inline-block; min-width: 18px; padding: 0 5px; border-radius: 8px; text-align: center;
-  background: var(--btn); color: #E4EEEC; font-size: 11px; letter-spacing: 0; text-transform: none; line-height: 16px;
+  display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 10px; text-align: center;
+  background: var(--achado); color: #2B2206; font-size: 11.5px; font-weight: 700; letter-spacing: 0; text-transform: none; line-height: 18px;
 }
 
-.achado { border-left: 3px solid transparent; border-radius: 3px; }
-.achado.on { border-left-color: var(--destaque); background: var(--sel); margin: 1px 0; }
+.achado { border-left: 3px solid transparent; border-radius: var(--raio); }
+.achado.on { border-left-color: var(--achado); background: rgba(240, 194, 85, .07); margin: 2px 0; }
 .achado-btn {
-  display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
-  background: none; border: 0; border-radius: 3px; padding: 3px 8px; cursor: pointer; color: var(--texto);
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 34px; text-align: left;
+  background: none; border: 0; border-radius: var(--raio); padding: 4px 10px; cursor: pointer; color: var(--texto);
   transition: background-color .12s;
 }
 .achado-btn:hover { background: var(--painel2); }
-.achado.on .achado-btn { color: #E6EBE7; font-weight: 600; }
-.achado.on .achado-btn:hover { background: #313d42; }
+.achado.on .achado-btn { color: #FFF3D0; font-weight: 600; }
+.achado.on .achado-btn:hover { background: rgba(240, 194, 85, .10); }
 .achado.nota .achado-btn { color: var(--texto2); }
-.achado.nota.on .achado-btn { color: #E6EBE7; }
+.achado.nota.on .achado-btn { color: #FFF3D0; }
 .achado-btn .nome { flex: 1 1 auto; }
-.insts { padding: 0 8px 5px 14px; display: flex; flex-direction: column; gap: 3px; }
-.inst { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-.inum { color: var(--texto2); font-size: 11px; min-width: 12px; }
-.vars { display: inline-flex; flex-wrap: wrap; gap: 3px; }
+.insts { padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.resultados .insts { padding: 2px 8px 8px 12px; }
+.inst { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 8px 5px 10px; border-left: 2px solid var(--achado-linha); background: rgba(0, 0, 0, .18); border-radius: 0 var(--raio) var(--raio) 0; }
+.inst.form { border-left-color: var(--calc-linha); }
+.inum { color: var(--texto2); font-size: 12px; min-width: 12px; }
+.vars { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .mini {
-  background: var(--painel2); border: 1px solid var(--linha); border-radius: 3px;
-  padding: 0 7px; font-size: 12px; line-height: 20px; cursor: pointer; color: var(--texto2);
-  transition: background-color .12s, color .12s;
+  display: inline-flex; align-items: center; gap: 4px; min-height: 26px;
+  background: var(--painel2); border: 1px solid var(--linha2); border-radius: 6px;
+  padding: 2px 9px; font-size: 12.5px; line-height: 1.2; cursor: pointer; color: var(--texto2); text-align: left;
+  transition: background-color .12s, color .12s, border-color .12s;
 }
-.mini:hover { color: var(--texto); background: #263034; }
-.mini[aria-pressed="true"] { color: var(--texto); border-color: var(--destaque); background: #1f3b40; }
-.mini.sutil { background: none; border-color: transparent; text-decoration: underline; text-decoration-color: var(--linha); text-underline-offset: 2px; }
-.mini.sutil:hover { color: var(--texto); }
+.mini:hover { color: var(--texto); background: var(--painel3); }
+.mini[aria-pressed="true"] { color: #FFF3D0; border-color: var(--achado); background: var(--achado-fundo); font-weight: 600; }
+.mini.sutil { background: none; border-color: transparent; color: var(--texto2); }
+.mini.sutil:hover { color: var(--texto); background: var(--painel3); }
+.mini.sutil[data-acao="remover"]:hover, .mini.sutil[data-acao="fm-remover"]:hover { color: #FFD9D2; background: rgba(240, 140, 125, .18); }
+.mini.fitem { background: var(--calc-fundo); border-color: var(--calc-linha); color: #ECE8FF; font-weight: 600; }
+.mini.fitem .ic { color: var(--calc); }
+.mini.fitem:hover { background: var(--calc-fundo2); border-color: var(--calc); }
 
 /* ---------- folha ---------- */
-.rolagem { flex: 1 1 auto; overflow-y: auto; padding: 14px 18px 20px; scrollbar-color: var(--linha) transparent; }
+.rolagem { flex: 1 1 auto; overflow-y: auto; padding: 18px 22px 24px; scrollbar-color: var(--linha2) transparent; }
 .folha {
   background: var(--papel); color: var(--papel-texto);
-  max-width: 860px; margin: 0 auto; padding: 26px 46px 28px 34px; border-radius: 2px;
-  font-family: Calibri, Carlito, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.38;
+  max-width: 880px; margin: 0 auto; padding: 30px 50px 32px 38px; border-radius: 4px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 10px 30px rgba(0,0,0,.45);
+  font-family: Calibri, Carlito, "Segoe UI", sans-serif; font-size: 16px; line-height: 1.42;
 }
 .folha[contenteditable="true"] { cursor: text; caret-color: #111; }
 .folha:focus, .folha:focus-visible { outline: none; }
 .folha .aviso-vazio { color: #4a4d50; }
-.par { margin: 0 0 14px; }
+.par { margin: 0 0 15px; }
 .par:last-child { margin-bottom: 0; }
-.par.titulo { font-size: 16px; }
-.linha { position: relative; margin: 0 -4px; padding: 0 4px; border-radius: 2px; white-space: pre-wrap; overflow-wrap: break-word; }
+.par.titulo { font-size: 17px; }
+.linha { position: relative; margin: 0 -5px; padding: 0 5px; border-radius: 3px; white-space: pre-wrap; overflow-wrap: break-word; }
 .linha.negrito { font-weight: bold; }
 /* o programa mudou (achado): realce amarelo */
 .linha.alterada { background: var(--realce); color: var(--realce-texto); }
 /* eu mudei (editada ou escrita à mão): fio fino na margem esquerda */
 .linha.manual::before {
-  content: ''; position: absolute; left: -9px; top: 3px; bottom: 3px; width: 2px; border-radius: 1px;
-  background: #3f7a83; pointer-events: none;
+  content: ''; position: absolute; left: -10px; top: 3px; bottom: 3px; width: 3px; border-radius: 2px;
+  background: #2F7F8B; pointer-events: none;
 }
 /* linha apagada: tracejado discreto no lugar, com "desfazer" na margem */
-.linha.removida { height: 7px; margin: 1px -4px; cursor: default; user-select: none; -webkit-user-select: none; }
-.linha.removida::after { content: ''; position: absolute; left: 4px; right: 4px; top: 3px; border-top: 1px dashed rgba(58, 52, 40, .35); }
+.linha.removida { height: 8px; margin: 1px -5px; cursor: default; user-select: none; -webkit-user-select: none; }
+.linha.removida::after { content: ''; position: absolute; left: 5px; right: 5px; top: 3px; border-top: 1px dashed rgba(58, 52, 40, .4); }
 .linha.removida.manual::before { top: 0; bottom: 0; background: #8b8577; }
 .marca {
-  position: absolute; right: -32px; top: 0; height: 1.38em; display: flex; align-items: center;
+  position: absolute; right: -36px; top: 0; height: 1.42em; display: flex; align-items: center;
   user-select: none; -webkit-user-select: none; font-weight: normal;
 }
-.linha.removida .marca { top: -7px; }
+.linha.removida .marca { top: -8px; }
 .desfazer {
-  width: 22px; height: 18px; display: inline-flex; align-items: center; justify-content: center;
-  background: none; border: 0; border-radius: 3px; padding: 0; cursor: pointer; color: #5f6a6c; opacity: .75;
+  width: 26px; height: 22px; display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 0; border-radius: 4px; padding: 0; cursor: pointer; color: #4f5a5c; opacity: .8;
   transition: opacity .12s, background-color .12s;
 }
-.desfazer:hover, .desfazer:focus-visible { opacity: 1; background: rgba(0,0,0,.09); color: #23262A; }
+.desfazer:hover, .desfazer:focus-visible { opacity: 1; background: rgba(0,0,0,.12); color: #1F2226; }
 .folha :focus-visible { outline-color: var(--foco-papel); }
 .ilha { white-space: nowrap; }
 
 /* campos dentro do texto */
 .campo { font: inherit; color: inherit; vertical-align: baseline; }
 input.campo.valor {
-  background: rgba(255,255,255,.38); border: 0; border-bottom: 1px solid #5a5650; border-radius: 2px;
-  padding: 0 3px; margin: 0 1px; min-width: 3ch; line-height: 1.2; height: 1.3em;
+  background: rgba(255,255,255,.45); border: 0; border-bottom: 1.5px solid #5a5650; border-radius: 3px;
+  padding: 0 4px; margin: 0 1px; min-width: 3.4ch; line-height: 1.2; height: 1.4em;
 }
-input.campo.valor:focus { background: rgba(255,255,255,.7); }
-.campo.pendente { box-shadow: 0 0 0 1px #6d5a1c, 0 0 0 3px var(--aviso); }
+input.campo.valor:hover { background: rgba(255,255,255,.62); }
+input.campo.valor:focus { background: rgba(255,255,255,.85); box-shadow: 0 0 0 2px var(--foco-papel); border-bottom-color: transparent; }
+.campo.pendente { box-shadow: 0 0 0 1px #7a631a, 0 0 0 3px #F0C255; }
 input.campo.valor.pendente { border-bottom-color: transparent; }
-.campo.escolha { display: inline-flex; gap: 2px; padding: 0 1px; border-radius: 3px; margin: 0 1px; vertical-align: baseline; }
+input.campo.valor.pendente:focus { box-shadow: 0 0 0 2px var(--foco-papel); }
+.campo.escolha { display: inline-flex; gap: 3px; padding: 1px; border-radius: 5px; margin: 0 1px; vertical-align: baseline; }
 .opc {
-  font: 12.5px/1.25 "Segoe UI", system-ui, sans-serif; color: var(--papel-texto);
-  background: #D3CEC3; border: 1px solid #7d786e; border-radius: 3px; padding: 0 6px; cursor: pointer;
-  transition: background-color .12s;
+  font: 13.5px/1.3 "Segoe UI", system-ui, sans-serif; color: var(--papel-texto);
+  background: #DCD7CC; border: 1px solid #77726a; border-radius: 5px; padding: 2px 9px; cursor: pointer;
+  transition: background-color .12s, border-color .12s;
 }
-.opc:hover { background: #E2DED4; }
-.opc[aria-pressed="true"] { background: #22565E; color: #EEF4F3; border-color: #22565E; }
+.opc:hover { background: #F1EEE6; border-color: #1D7480; }
+.opc[aria-pressed="true"] { background: #1D7480; color: #F1F8F7; border-color: #1D7480; }
 button.campo.escolhida {
   background: none; border: 0; border-bottom: 1px dotted #5a5650; padding: 0; margin: 0; cursor: pointer; border-radius: 0;
 }
-button.campo.escolhida:hover { background: rgba(255,255,255,.3); }
+button.campo.escolhida:hover { background: rgba(255,255,255,.4); }
 /* calculado pelo motor: não se digita; marca discreta (fundo leve e sublinhado pontilhado) */
 .campo.calc {
-  background: rgba(34,86,94,.10); border-bottom: 1px dotted #22565E; border-radius: 2px; padding: 0 2px; cursor: default;
+  background: rgba(29,116,128,.12); border-bottom: 1px dotted #1D7480; border-radius: 3px; padding: 0 3px; cursor: default;
 }
 .campo.calc.pendente { background: none; }
 /* medida fora do corte de uma regra (só na tela): fundo e sublinhado avermelhados */
-input.campo.valor.alerta, .campo.calc.alerta { background: rgba(170, 52, 38, .16); border-bottom: 2px solid #A3402F; }
-input.campo.valor.alerta:focus { background: rgba(255, 236, 230, .8); }
+input.campo.valor.alerta, .campo.calc.alerta { background: rgba(190, 52, 38, .18); border-bottom: 2px solid #A3402F; }
+input.campo.valor.alerta:focus { background: rgba(255, 236, 230, .85); }
 .campo.outro { border-bottom: 1px dotted #5a5650; }
 
 /* rodapé */
 .rodape {
-  display: flex; align-items: center; gap: 16px; height: 30px; padding: 0 14px;
-  background: var(--painel); border-top: 1px solid var(--linha); color: var(--texto2); font-size: 12px; white-space: nowrap; overflow: hidden;
+  display: flex; align-items: center; gap: 14px; height: 40px; padding: 0 16px;
+  background: var(--painel); border-top: 1px solid var(--linha); color: var(--texto2); font-size: 13px; white-space: nowrap; overflow: hidden;
 }
-.rodape .pend { color: var(--aviso); }
-.rodape .copiado { color: var(--destaque); }
-.rodape .dicas { margin-left: auto; color: #6f7a7d; overflow: hidden; text-overflow: ellipsis; }
+.rodape .pend {
+  display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; cursor: pointer;
+  background: rgba(240, 194, 85, .12); border: 1px solid var(--achado-linha); border-radius: 14px; color: var(--achado); font-weight: 600;
+  transition: background-color .12s;
+}
+.rodape .pend:hover { background: rgba(240, 194, 85, .22); }
+.rodape .tudo-ok { display: inline-flex; align-items: center; gap: 7px; color: var(--ok); }
+.rodape .copiado { display: inline-flex; align-items: center; gap: 5px; color: var(--ok); }
+.rodape .dicas { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; color: var(--texto3); font-size: 12px; overflow: hidden; }
+.rodape .dicas i { display: inline-block; width: 12px; }
 .semjs { padding: 20px; }
 
-@media (max-width: 1100px) {
-  .folha { padding: 20px 40px 22px 22px; }
-}
-
 /* Busca: achado com lado mostra os botões de lado ao lado do nome */
-.res-linha { display: flex; align-items: center; gap: 4px; }
+.res-linha { display: flex; align-items: center; gap: 6px; }
 .res-linha .achado-btn { flex: 1 1 auto; min-width: 0; }
-.res-linha .mini.lado { flex: none; text-transform: capitalize; }
+.res-linha .mini.lado { flex: none; text-transform: capitalize; min-height: 28px; margin-right: 6px; }
 .res-linha .mini.lado.form { text-transform: none; }
 
 /* ---------- formulário (calculadora) no lugar do painel de achados ---------- */
 .col-achados.com-form .busca { display: none; }
-.col-achados.com-form .lista-achados { padding-top: 0; }
-.chip.form { font-weight: 600; }
-.inst.form .fitem { color: var(--texto); }
-.fm-painel { padding-bottom: 8px; }
+.inst.form .fitem { color: #ECE8FF; }
+.fm-painel { padding-bottom: 12px; }
 .fm-topo {
   position: sticky; top: 0; z-index: 2;
-  background: var(--painel); border-bottom: 1px solid var(--linha); padding: 7px 12px 8px;
+  background: var(--painel); border-bottom: 1px solid var(--linha); border-left: 3px solid var(--calc); padding: 9px 14px 11px 11px;
+  box-shadow: 0 6px 12px rgba(0,0,0,.25);
 }
-.fm-barra { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.fm-voltar { background: none; border: 0; padding: 2px 0; cursor: pointer; color: var(--destaque); font-size: 12.5px; white-space: nowrap; }
-.fm-voltar:hover { color: #9fd4da; }
-.fm-titulo { margin-left: auto; color: var(--texto); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fm-resumo { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 6px; }
+.fm-barra { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.fm-voltar { display: inline-flex; align-items: center; gap: 6px; height: 32px; background: var(--painel2); border: 1px solid var(--linha2); border-radius: var(--raio); padding: 0 12px 0 9px; cursor: pointer; color: var(--texto); font-size: 13.5px; white-space: nowrap; }
+.fm-voltar:hover { background: var(--painel3); }
+.fm-titulo { margin-left: auto; color: var(--calc); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fm-resumo { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-top: 9px; }
 .fm-res { min-width: 0; }
-.fm-res .r { display: block; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--texto2); }
-.fm-res .v { display: block; font-size: 15px; font-weight: 600; color: var(--texto); }
-.fm-res.pendente .v { font-size: 12.5px; font-weight: normal; color: var(--aviso); }
-.fm-res.nivel1 .v, .fm-res.nivel2 .v { color: #8fc79f; }
-.fm-res.nivel3 .v { color: #e8c877; }
-.fm-res.nivel4 .v { color: #e6a466; }
-.fm-res.nivel5 .v { color: #ec8576; }
-.fm-sec { padding: 9px 12px 2px; }
-.fm-rot { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; font-size: 12px; color: var(--texto2); }
-.fm-rot .nome { color: var(--texto); font-weight: 600; }
-.fm-rot .dica { font-size: 11.5px; }
-.fm-cartoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(126px, 1fr)); gap: 6px; }
+.fm-res .r { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--texto2); }
+.fm-res .v { display: block; font-size: 17px; font-weight: 700; color: var(--texto); }
+.fm-res.pendente .v { font-size: 13px; font-weight: normal; color: var(--aviso); }
+.fm-res.nivel1 .v, .fm-res.nivel2 .v { color: #7FD3A2; }
+.fm-res.nivel3 .v { color: #F0C255; }
+.fm-res.nivel4 .v { color: #F2A65A; }
+.fm-res.nivel5 .v { color: #F08C7D; }
+.fm-sec { padding: 13px 14px 3px; }
+.fm-rot { display: flex; align-items: baseline; gap: 8px; margin-bottom: 7px; font-size: 13px; color: var(--texto2); }
+.fm-rot .nome { color: var(--texto); font-weight: 600; font-size: 13.5px; }
+.fm-rot .dica { font-size: 12px; }
+.fm-cartoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
 .cartao {
-  position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0;
-  background: var(--painel2); border: 1px solid var(--linha); border-radius: 4px; padding: 4px 4px 5px;
+  position: relative; display: flex; flex-direction: column; gap: 5px; min-width: 0;
+  background: var(--painel2); border: 1px solid var(--linha2); border-radius: var(--raio); padding: 5px 5px 7px;
   cursor: pointer; text-align: left; color: var(--texto); transition: background-color .12s, border-color .12s;
 }
-.cartao:hover { background: var(--sel); }
-.cartao .fig { display: block; width: 100%; max-width: 120px; height: auto; margin: 0 auto; border-radius: 2px; }
-.cartao .cn { padding: 0 2px; font-size: 12px; line-height: 1.25; }
+.cartao:hover { background: var(--painel3); border-color: #51626a; }
+.cartao .fig { display: block; width: 100%; max-width: 128px; height: auto; margin: 0 auto; border-radius: 4px; }
+.cartao .cn { padding: 0 3px; font-size: 13px; line-height: 1.25; }
 .cartao .pts {
-  position: absolute; top: 7px; right: 7px; padding: 0 6px; border-radius: 8px;
-  background: rgba(0,0,0,.72); color: #eef2f1; font-size: 11px; font-weight: 600; line-height: 16px;
+  position: absolute; top: 8px; right: 8px; padding: 0 7px; border-radius: 9px;
+  background: rgba(0,0,0,.72); color: #eef2f1; font-size: 11.5px; font-weight: 700; line-height: 18px;
 }
-.cartao[aria-pressed="true"] { background: #1f3b40; border-color: var(--destaque); box-shadow: 0 0 0 1px var(--destaque); }
-.cartao[aria-pressed="true"] .pts { background: var(--destaque); color: #0b1a1c; }
-.cartao[aria-pressed="false"] .fig { opacity: .82; }
+.cartao[aria-pressed="true"] { background: var(--achado-fundo); border-color: var(--achado); box-shadow: 0 0 0 1px var(--achado); color: #FFF3D0; font-weight: 600; }
+.cartao[aria-pressed="true"] .pts { background: var(--achado); color: #2B2206; }
+.cartao[aria-pressed="false"] .fig { opacity: .85; }
 .cartao:hover .fig { opacity: 1; }
-.fm-chips { display: flex; flex-wrap: wrap; gap: 3px; }
-.fm-chips .pts { color: var(--texto2); font-size: 11px; }
-.fm-medidas { display: flex; align-items: center; gap: 6px; }
+.fm-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.fm-chips .pts { color: var(--texto2); font-size: 11.5px; font-weight: 600; }
+.fm-chips .chip.on .pts { color: var(--achado); }
+.fm-medidas { display: flex; align-items: center; gap: 8px; }
 .fm-medida {
-  width: 64px; padding: 4px 6px; border: 1px solid var(--linha); border-radius: 4px;
-  background: var(--fundo); color: var(--texto); font: inherit;
+  width: 76px; height: 34px; padding: 0 9px; border: 1px solid var(--linha2); border-radius: var(--raio);
+  background: var(--fundo); color: var(--texto); font: inherit; font-size: 15px;
 }
-.fm-medida:focus-visible { outline-offset: 0; border-color: var(--destaque); }
-.fm-medida.pendente { border-color: #6d5a1c; }
+.fm-medida:focus-visible { outline: none; border-color: var(--destaque); box-shadow: 0 0 0 3px rgba(95, 192, 204, .18); }
+.fm-medida.pendente { border-color: var(--achado-linha); }
 .fm-x, .fm-un { color: var(--texto2); }
-.fm-config { display: flex; align-items: center; gap: 7px; padding: 12px 12px 0; cursor: pointer; }
-.fm-config input { margin: 0; accent-color: var(--destaque); }
-.fm-acoes { display: flex; align-items: center; gap: 12px; padding: 12px 12px 4px; }
+.fm-config { display: flex; align-items: center; gap: 8px; padding: 14px 14px 0; cursor: pointer; color: var(--texto2); }
+.fm-config input { margin: 0; width: 16px; height: 16px; accent-color: var(--destaque); }
+.fm-acoes { display: flex; align-items: center; gap: 12px; padding: 14px 14px 4px; }
 
 /* formulário: linha de regra no resumo, opção sugerida, mostrador (relógio) */
 .fm-res.nota { flex: 1 0 100%; }
-.fm-res.nota .v { font-size: 12.5px; font-weight: normal; color: var(--texto2); }
-.chip.sugerida:not(.on), .cartao.sugerida[aria-pressed="false"] { border-color: var(--aviso); border-style: dashed; }
-.chip.sugerida:not(.on)::after { content: 'sugestão'; font-size: 10.5px; color: var(--aviso); }
-.fm-relogio { position: relative; width: 240px; height: 210px; margin: 2px 0 4px; }
-.fm-relogio .fig-relogio { position: absolute; inset: 0; display: block; }
+.fm-res.nota .v { font-size: 13px; font-weight: normal; color: var(--texto2); }
+.chip.sugerida:not(.on), .cartao.sugerida[aria-pressed="false"] { border-color: var(--destaque); border-style: dashed; }
+.chip.sugerida:not(.on)::after { content: 'sugestão'; font-size: 11px; color: var(--destaque); }
+.fm-relogio { position: relative; width: 264px; height: 231px; margin: 2px 0 6px; }
+.fm-relogio .fig-relogio { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .rl-op {
   position: absolute; transform: translate(-50%, -50%);
-  background: var(--painel2); border: 1px solid var(--linha); color: var(--texto); cursor: pointer;
+  background: var(--painel2); border: 1px solid var(--linha2); color: var(--texto); cursor: pointer;
   transition: background-color .12s, border-color .12s;
 }
-.rl-op.hora { width: 26px; height: 26px; border-radius: 50%; padding: 0; font-size: 12px; line-height: 24px; text-align: center; }
-.rl-op.local { border-radius: 11px; padding: 0 7px; font-size: 11px; line-height: 19px; white-space: nowrap; }
-.rl-op:hover { background: var(--sel); }
-.rl-op.on { background: var(--btn); border-color: var(--destaque); color: #E8F0EE; box-shadow: 0 0 0 1px var(--destaque); }
+.rl-op.hora { width: 30px; height: 30px; border-radius: 50%; padding: 0; font-size: 13px; line-height: 28px; text-align: center; }
+.rl-op.local { border-radius: 12px; padding: 0 8px; font-size: 12px; line-height: 22px; white-space: nowrap; }
+.rl-op:hover { background: var(--painel3); border-color: #51626a; }
+.rl-op.on { background: var(--achado-fundo); border-color: var(--achado); color: #FFF3D0; box-shadow: 0 0 0 1px var(--achado); font-weight: 600; }
 button.campo.escolhida.auto { border-bottom-style: dashed; }
 
 /* Escolha com opções longas (BI-RADS, recomendação) quebra em linhas em vez de estourar a folha */
-.campo.escolha { flex-wrap: wrap; max-width: 100%; row-gap: 2px; white-space: normal; }
+.campo.escolha { flex-wrap: wrap; max-width: 100%; row-gap: 3px; white-space: normal; }
 .campo.escolha button { white-space: normal; text-align: left; }
+
+/* ---------- telas menores ---------- */
+@media (max-width: 1480px) {
+  .topo { gap: 10px; padding: 0 12px; }
+  .aba { padding: 0 8px; gap: 5px; font-size: 13.5px; }
+  .aba .ic { width: 16px; height: 16px; }
+  .btn.principal { min-width: 0; padding: 0 14px; }
+  #btnNovo { padding: 0 11px; }
+  #btnNovo span { display: none; }
+  .acoes { gap: 8px; }
+}
+@media (max-width: 1280px) {
+  .faixa { grid-template-columns: 122px minmax(0, 1fr); }
+}
+@media (max-width: 1180px) {
+  .logo span { display: none; }
+}
+@media (max-width: 1100px) {
+  .folha { padding: 22px 42px 24px 24px; }
+  .aba .ic { display: none; }
+  .rodape .dicas { display: none; }
+  .faixa { grid-template-columns: 104px minmax(0, 1fr); column-gap: 8px; }
+  .fx-estado { display: none; }
+}
+@media (max-height: 760px) {
+  .topo { height: 48px; }
+  .aba, .btn { height: 34px; }
+  .aba[aria-pressed="true"]::after { bottom: -7px; }
+  .mascaras { padding: 6px 16px; }
+  .faixa { padding-top: 7px; padding-bottom: 7px; }
+}
+
+/* ações da instância (remover, outro igual) encostadas à direita */
+.inst [data-acao="remover"] { margin-left: auto; }
+
+/* aviso da cópia: flutua sob os botões, sem empurrar as abas */
+.acoes { position: relative; }
+.aviso-copia {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 5; pointer-events: none;
+  background: var(--painel3); border: 1px solid var(--ok-linha); border-radius: var(--raio); padding: 7px 13px;
+  color: var(--texto); box-shadow: 0 8px 20px rgba(0,0,0,.45); transform: translateY(-4px); transition: opacity .15s, transform .15s;
+}
+.aviso-copia.visivel { transform: none; }
+.aviso-copia.alerta { border-color: var(--achado-linha); color: var(--aviso); }
+
+/* ---------- telas grandes: tudo um pouco maior ---------- */
+@media (min-width: 1700px) and (min-height: 900px) {
+  body { font-size: 15px; }
+  .chip { min-height: 34px; font-size: 14.5px; padding: 4px 13px; }
+  .mini { min-height: 29px; font-size: 13.5px; }
+  .aba { font-size: 15px; padding: 0 14px; }
+  .mascara { height: 35px; padding: 0 16px; }
+  .faixa { grid-template-columns: 168px minmax(0, 1fr); padding-top: 12px; padding-bottom: 12px; }
+  .fx-rot { font-size: 14.5px; padding-top: 8px; }
+  .folha { font-size: 17px; max-width: 940px; }
+  .par.titulo { font-size: 18px; }
+  .opc { font-size: 14.5px; }
+  .fm-cartoes { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}
 
 </style>
 </head>
 <body>
 <header class="topo">
-  <div class="logo">Isodens USG</div>
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5 4 17.5"/><path d="M12 3.5l8 14"/><path d="M8.6 9.6a7 7 0 0 0 6.8 0"/><path d="M6.3 13.6a11.5 11.5 0 0 0 11.4 0"/><path d="M4 17.5a16 16 0 0 0 16 0"/></svg><span>Isodens <b>USG</b></span></div>
   <nav class="categorias" id="categorias" aria-label="Categorias"></nav>
   <div class="acoes">
     <span class="aviso-copia" id="avisoCopia" aria-live="polite"></span>
@@ -380,8 +537,9 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
   <section class="col-achados" aria-label="Achados">
     <div class="paciente" id="paciente" role="group" aria-label="Dados da paciente (não entram no laudo)" hidden></div>
     <div class="busca">
-      <input id="busca" type="search" placeholder="Buscar achado   ( / )" autocomplete="off" spellcheck="false" aria-label="Buscar achado">
+      <input id="busca" type="search" placeholder="Buscar achado em todo o exame" autocomplete="off" spellcheck="false" aria-label="Buscar achado"><kbd>/</kbd>
     </div>
+    <div class="marcados" id="marcados" role="group" aria-label="Achados marcados" hidden></div>
     <div id="achados" class="lista-achados"></div>
   </section>
   <section class="col-laudo" aria-label="Laudo">
@@ -2635,12 +2793,55 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
 
 </script>
 <script>
+/* Isodens USG - ícones (traços do pacote Tabler Icons, licença MIT, (c) Paweł Kuna). Gerado; não editar à mão. */
+(function () {
+  'use strict';
+  var P = {
+    'abdome': '<path d="M11 8a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M10 17v-1a2 2 0 1 1 4 0v1" /><path d="M8 10q 1 1 2 1h4q 1 0 2 -1" /><path d="M12 11v3" /><path d="M3 7v-2a2 2 0 0 1 2 -2h2" /><path d="M3 17v2a2 2 0 0 0 2 2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" /><path d="M17 21h2a2 2 0 0 0 2 -2v-2" />',
+    'cervical-tireoide': '<path d="M12 18.176a3 3 0 1 1 -4.953 -2.449l-.025 .023a4.502 4.502 0 0 1 1.483 -8.75c1.414 0 2.675 .652 3.5 1.671a4.5 4.5 0 1 1 4.983 7.079a3 3 0 1 1 -4.983 2.25l-.005 .176" /><path d="M12 19v-10" /><path d="M9 3l3 2l3 -2" />',
+    'ginecologia': '<path d="M7 9a5 5 0 1 0 10 0a5 5 0 1 0 -10 0" /><path d="M12 14l0 7" /><path d="M9 18l6 0" />',
+    'mama': '<path d="M7 21s9.286 -9.841 9.286 -13.841a3.864 3.864 0 0 0 -1.182 -3.008a4.13 4.13 0 0 0 -3.104 -1.144a4.13 4.13 0 0 0 -3.104 1.143a3.864 3.864 0 0 0 -1.182 3.01c0 4 9.286 13.84 9.286 13.84" />',
+    'obstetricia': '<path d="M6 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M16 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M2 5h2.5l1.632 4.897a6 6 0 0 0 5.693 4.103h2.675a5.5 5.5 0 0 0 0 -11h-.5v6" /><path d="M6 9h14" /><path d="M9 17l1 -3" /><path d="M16 14l1 3" />',
+    'mao': '<path d="M8 13v-7.5a1.5 1.5 0 0 1 3 0v6.5" /><path d="M11 5.5v-2a1.5 1.5 0 1 1 3 0v8.5" /><path d="M14 5.5a1.5 1.5 0 0 1 3 0v6.5" /><path d="M17 7.5a1.5 1.5 0 0 1 3 0v8.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />',
+    'punho': '<path d="M6 9a3 3 0 0 1 3 -3h6a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3v-6" /><path d="M9 18v3h6v-3" /><path d="M9 6v-3h6v3" />',
+    'rins-vias-prostata': '<path d="M7.502 19.423c2.602 2.105 6.395 2.105 8.996 0c2.602 -2.105 3.262 -5.708 1.566 -8.546l-4.89 -7.26c-.42 -.625 -1.287 -.803 -1.936 -.397a1.376 1.376 0 0 0 -.41 .397l-4.893 7.26c-1.695 2.838 -1.035 6.441 1.567 8.546" />',
+    'copiar': '<path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666" /><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" />',
+    'novo': '<path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2" /><path d="M12 11l0 6" /><path d="M9 14l6 0" />',
+    'buscar': '<path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" />',
+    'calc': '<path d="M4 5a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -14" /><path d="M8 8a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1l0 -1" /><path d="M8 14l0 .01" /><path d="M12 14l0 .01" /><path d="M16 14l0 .01" /><path d="M8 17l0 .01" /><path d="M12 17l0 .01" /><path d="M16 17l0 .01" />',
+    'ok': '<path d="M5 12l5 5l10 -10" />',
+    'okc': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 12l2 2l4 -4" />',
+    'alerta': '<path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0" /><path d="M12 16h.01" />',
+    'mais': '<path d="M12 5l0 14" /><path d="M5 12l14 0" />',
+    'x': '<path d="M18 6l-12 12" /><path d="M6 6l12 12" />',
+    'voltar': '<path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" />',
+    'baixo': '<path d="M6 9l6 6l6 -6" />',
+    'direita': '<path d="M9 6l6 6l-6 6" />',
+    'pessoa': '<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />',
+    'lista': '<path d="M3.5 5.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 11.5l1.5 1.5l2.5 -2.5" /><path d="M3.5 17.5l1.5 1.5l2.5 -2.5" /><path d="M11 6l9 0" /><path d="M11 12l9 0" /><path d="M11 18l9 0" />',
+    'info': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" />',
+    'normal': '<path d="M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3" /><path d="M18 13.3l-6.3 -6.3" />',
+    'teclado': '<path d="M2 8a2 2 0 0 1 2 -2h16a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2l0 -8" /><path d="M6 10l0 .01" /><path d="M10 10l0 .01" /><path d="M14 10l0 .01" /><path d="M18 10l0 .01" /><path d="M6 14l0 .01" /><path d="M18 14l0 .01" /><path d="M10 14l4 .01" />',
+    'campo': '<path d="M12 3a3 3 0 0 0 -3 3v12a3 3 0 0 0 3 3" /><path d="M6 3a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3" /><path d="M13 7h7a1 1 0 0 1 1 1v8a1 1 0 0 1 -1 1h-7" /><path d="M5 7h-1a1 1 0 0 0 -1 1v8a1 1 0 0 0 1 1h1" /><path d="M17 12h.01" /><path d="M13 12h.01" />',
+    'exame': '<path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 5a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2" /><path d="M10 14l4 0" /><path d="M12 12l0 4" />'
+  };
+  // ic(nome, tamanho): SVG de traço na cor do texto; decorativo (o botão leva o rótulo).
+  window.USGIcone = function (nome, tam) {
+    var p = P[nome]; if (!p) return '';
+    var t = tam || 16;
+    return '<svg class="ic" width="' + t + '" height="' + t + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + p + '</svg>';
+  };
+})();
+
+</script>
+<script>
 /* Isodens USG - interface. Depende de USGMotor (motor.js) e window.USG_DADOS. */
 (function () {
   'use strict';
   var M = window.USGMotor;
   var DADOS = window.USG_DADOS || [];
   var esc = M.escHtml;
+  var IC = window.USGIcone || function () { return ''; };
   var $ = function (id) { return document.getElementById(id); };
   var CHAVE_PREFS = 'isodens-usg:prefs';
   var DESFAZER = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3 2.5 6l3 3M3 6h6.5a4 4 0 0 1 0 8H7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -2740,11 +2941,11 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
   // ---------- barra superior e máscaras ----------
   function renderCategorias() {
     $('categorias').innerHTML = DADOS.map(function (c) {
-      return '<button type="button" class="aba" data-acao="categoria" data-id="' + esc(c.id) + '" data-f="cat:' + esc(c.id) + '" aria-pressed="' + (c === cat) + '">' + esc(c.nome) + '</button>';
+      return '<button type="button" class="aba" data-acao="categoria" data-id="' + esc(c.id) + '" data-f="cat:' + esc(c.id) + '" data-cat="' + esc(c.id) + '" aria-pressed="' + (c === cat) + '">' + IC(c.id, 18) + '<span>' + esc(c.nome) + '</span></button>';
     }).join('');
   }
   function renderMascaras() {
-    $('mascaras').innerHTML = cat ? cat.mascaras.map(function (m) {
+    $('mascaras').innerHTML = cat ? '<span class="masc-rot">' + IC('exame', 16) + 'Exame</span>' + cat.mascaras.map(function (m) {
       return '<button type="button" class="mascara" data-acao="mascara" data-id="' + esc(m.id) + '" data-f="masc:' + esc(m.id) + '" aria-pressed="' + (m.id === laudo.estado.mascara) + '">' + esc(m.nome) + '</button>';
     }).join('') : '';
   }
@@ -2933,9 +3134,26 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     if (!cat) { $('achados').innerHTML = ''; return; }
     if (formAberto && !laudo.instancia(formAberto)) formAberto = null;
     document.querySelector('.col-achados').classList.toggle('com-form', !!formAberto);
+    renderMarcados();
     if (formAberto) { $('achados').innerHTML = htmlFormulario(formAberto); return; }
     var q = M.normalizar(busca);
     $('achados').innerHTML = q ? htmlBusca(q) : htmlFaixas();
+  }
+
+  // Resumo do que está marcado, no topo do painel: um clique leva à faixa; o x remove.
+  function renderMarcados() {
+    var el = $('marcados'), lista = formAberto ? [] : laudo.estado.achados;
+    if (!lista.length) { if (!el.hidden) { el.hidden = true; el.innerHTML = ''; } return; }
+    var h = '<span class="mc-rot">' + IC('lista', 15) + plural(lista.length, 'marcado', 'marcados') + '</span>';
+    lista.forEach(function (inst) {
+      var r = laudo.buscar(inst.grupo, inst.achado); if (!r) return;
+      var def = M.formularioDe(r.achado), fx = faixaDaInst(inst) || '', uid = esc(inst.uid);
+      var nome = def ? rotuloForm(inst.uid) : r.achado.nome;
+      h += '<span class="mc-item' + (def ? ' form' : '') + (r.achado.tipo === 'nota' ? ' nota' : '') + '"><button type="button" class="mc-nome" data-acao="' + (def ? 'fm-abrir' : 'ir-faixa') + '" data-fx="' + esc(fx) + '" data-uid="' + uid + '" data-f="mc:' + uid + '" title="' + (def ? 'Abrir a calculadora' : 'Mostrar no painel') + '">' + esc(nome) + '</button>' +
+        '<button type="button" class="mc-x" data-acao="remover" data-uid="' + uid + '" data-g="' + esc(inst.grupo) + '" data-a="' + esc(inst.achado) + '" data-fx="' + esc(fx) + '" data-f="mcx:' + uid + '" title="Remover" aria-label="Remover ' + esc(nome) + '">' + IC('x', 13) + '</button></span>';
+    });
+    el.hidden = false;
+    el.innerHTML = h;
   }
 
   // ---------- formulário (achado com "formulario"): ocupa o painel de achados ----------
@@ -2956,7 +3174,7 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     var u = esc(uid);
     var h = '<div class="fm-painel" data-form="' + esc(fid) + '">' +
       '<div class="fm-topo"><div class="fm-barra">' +
-      '<button type="button" class="fm-voltar" data-acao="fm-voltar" data-uid="' + u + '" data-f="fmv">‹ Voltar aos achados</button>' +
+      '<button type="button" class="fm-voltar" data-acao="fm-voltar" data-uid="' + u + '" data-f="fmv">' + IC('voltar', 16) + 'Voltar aos achados</button>' +
       '<span class="fm-titulo">' + (n && def.prefixo ? esc(def.prefixo + n) + ' · ' : '') + esc(def.nome || '') + '</span></div>' +
       '<div class="fm-resumo">' + (res.itens || []).map(function (it) {
         return '<div class="fm-res' + (it.pendente ? ' pendente' : '') + (it.nivel ? ' nivel' + it.nivel : '') + (it.nota ? ' nota' : '') + '"><span class="r">' + esc(it.rotulo) + '</span><span class="v">' + esc(it.valor) + '</span></div>';
@@ -3013,8 +3231,8 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     (def.opcoes || []).forEach(function (o) {
       h += '<label class="fm-config"><input type="checkbox" data-acao="fm-config" data-form="' + esc(fid) + '" data-op="' + esc(o.id) + '" data-f="fmc:' + esc(o.id) + '"' + (op[o.id] ? ' checked' : '') + '> ' + esc(o.nome) + '</label>';
     });
-    h += '<div class="fm-acoes"><button type="button" class="btn" data-acao="fm-outro" data-uid="' + u + '" data-f="fmo-outro">+ ' + esc(def.rotuloOutro || 'Outro') + '</button>' +
-      '<button type="button" class="mini sutil" data-acao="fm-remover" data-uid="' + u + '" data-f="fmr">remover ' + esc(n && def.prefixo ? def.prefixo + n : 'este') + '</button></div>';
+    h += '<div class="fm-acoes"><button type="button" class="btn" data-acao="fm-outro" data-uid="' + u + '" data-f="fmo-outro">' + IC('mais', 15) + esc(def.rotuloOutro || 'Outro') + '</button>' +
+      '<button type="button" class="mini sutil" data-acao="fm-remover" data-uid="' + u + '" data-f="fmr">' + IC('x', 13) + 'remover ' + esc(n && def.prefixo ? def.prefixo + n : 'este') + '</button></div>';
     return h + '</div>';
   }
 
@@ -3066,7 +3284,7 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     // formulário: cada clique abre um novo (os já inseridos ficam listados abaixo)
     return '<button type="button" class="chip' + (n ? ' on' : '') + (form ? ' form' : '') + (x.a.tipo === 'nota' ? ' nota' : '') + '" data-acao="' + (form ? 'fx-form' : 'fx-alternar') + '" data-fx="' + f.id + '"' +
       ' data-g="' + esc(x.g.id) + '" data-a="' + esc(x.a.id) + '" data-k="' + esc(x.k) + '" data-f="fx:' + f.id + ':' + esc(c) + '"' +
-      ' aria-pressed="' + (n > 0) + '" title="' + esc(x.g.nome) + '">' + esc(x.a.nome) + (n > 1 ? '<span class="cont">' + n + '</span>' : '') + '</button>';
+      ' aria-pressed="' + (n > 0) + '" title="' + esc(form ? 'Abre a calculadora' : x.g.nome) + '">' + (form ? IC('calc', 15) : n ? IC('ok', 14) : '') + esc(x.a.nome) + (n > 1 ? '<span class="cont">' + n + '</span>' : '') + '</button>';
   }
 
   function htmlFaixa(f, insts) {
@@ -3075,9 +3293,9 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     var freq = f.itens.filter(fixo), resto = f.itens.filter(function (x) { return !fixo(x); });
     var recolhe = f.itens.length > 6 && resto.length > 1, aberto = !!abertos[f.id];
     var h = '<section class="faixa' + (insts.length ? ' tem' : '') + '" data-faixa="' + f.id + '" aria-label="' + esc(f.nome) + '">' +
-      '<div class="fx-rot">' + esc(f.nome) + '</div><div class="fx-corpo"><div class="fx-btns">' +
+      '<div class="fx-rot"><span class="fx-estado" aria-hidden="true">' + IC(insts.length ? 'alerta' : 'okc', 16) + '</span><span class="fx-nome">' + esc(f.nome) + '</span></div><div class="fx-corpo"><div class="fx-btns">' +
       '<button type="button" class="chip normal" data-acao="fx-normal" data-fx="' + f.id + '" data-f="fxn:' + f.id + '" aria-pressed="' + !insts.length + '"' +
-      ' title="' + (insts.length ? 'Voltar ao normal (remove os achados desta faixa)' : 'Sem achados') + '">Normal</button>';
+      ' title="' + (insts.length ? 'Voltar ao normal (remove os achados desta faixa)' : 'Sem achados: o texto normal fica no laudo') + '">' + IC(insts.length ? 'normal' : 'ok', 14) + 'Normal</button>';
     var ch = function (x) { return chip(f, x, on); };
     if (!recolhe) h += f.itens.map(ch).join('');
     else {
@@ -3085,7 +3303,7 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
       var extra = aberto ? resto : resto.filter(function (x) { return on[chaveAch(x)]; });
       h += freq.map(ch).join('') +
         '<button type="button" class="chip mais" data-acao="fx-mais" data-fx="' + f.id + '" data-f="fxm:' + f.id + '" aria-expanded="' + aberto + '">' +
-        (aberto ? 'menos' : 'mais (' + (resto.length - extra.length) + ')') + '</button>' + extra.map(ch).join('');
+        (aberto ? 'menos' : IC('mais', 13) + 'mais ' + (resto.length - extra.length)) + '</button>' + extra.map(ch).join('');
     }
     return h + '</div>' + htmlInsts(insts, f) + '</div></section>';
   }
@@ -3095,7 +3313,7 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     var aberto = !!abertos[f.id], on = contagem(insts);
     var h = '<section class="faixa aux' + (aberto ? '' : ' fechado') + (insts.length ? ' tem' : '') + '" data-faixa="' + f.id + '" aria-label="' + esc(f.nome) + '">' +
       '<button type="button" class="grupo-cab" data-acao="fx-abrir" data-fx="' + f.id + '" data-f="fxa:' + f.id + '" aria-expanded="' + aberto + '">' +
-      '<span class="seta" aria-hidden="true"></span><span class="gnome">' + esc(f.nome) + ' <span class="qtd">' + f.itens.length + '</span></span>' +
+      '<span class="seta" aria-hidden="true">' + IC('direita', 15) + '</span><span class="gnome">' + esc(f.nome) + ' <span class="qtd">' + f.itens.length + '</span></span>' +
       (insts.length ? '<span class="cont" title="marcados">' + insts.length + '</span>' : '') + '</button>';
     if (aberto) h += '<div class="fx-corpo"><div class="fx-btns">' + f.itens.map(function (x) { return chip(f, x, on); }).join('') + '</div>' + htmlInsts(insts, f) + '</div>';
     return h + '</section>';
@@ -3111,8 +3329,8 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
       var uid = esc(x.inst.uid);
       var du = ' data-uid="' + uid + '" data-g="' + esc(x.g.id) + '" data-a="' + esc(x.a.id) + '" data-fx="' + fx + '"';
       if (M.formularioDe(x.a)) { // item que reabre o formulário daquele nódulo
-        h += '<div class="inst form"><button type="button" class="mini fitem" data-acao="fm-abrir"' + du + ' data-f="fma:' + uid + '" title="Abrir o formulário">' + esc(rotuloForm(x.inst.uid)) + '</button>' +
-          '<button type="button" class="mini sutil" data-acao="remover"' + du + ' data-f="rem:' + fx + ':' + uid + '">remover</button></div>';
+        h += '<div class="inst form"><button type="button" class="mini fitem" data-acao="fm-abrir"' + du + ' data-f="fma:' + uid + '" title="Abrir a calculadora">' + IC('calc', 14) + esc(rotuloForm(x.inst.uid)) + '</button>' +
+          '<button type="button" class="mini sutil" data-acao="remover"' + du + ' data-f="rem:' + fx + ':' + uid + '">' + IC('x', 13) + 'remover</button></div>';
         return;
       }
       h += '<div class="inst">';
@@ -3123,8 +3341,8 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
           return '<button type="button" class="mini var" data-acao="variante"' + du + ' data-v="' + i + '" data-f="var:' + fx + ':' + uid + ':' + i + '" aria-pressed="' + (x.inst.variante === i) + '">' + esc(v.nome || ('Variante ' + (i + 1))) + '</button>';
         }).join('') + '</span>';
       }
-      h += '<button type="button" class="mini sutil" data-acao="remover"' + du + ' data-f="rem:' + fx + ':' + uid + '">remover</button>';
-      if (k === mesmos.length - 1) h += '<button type="button" class="mini sutil" data-acao="duplicar"' + du + ' data-f="dup:' + fx + ':' + esc(chaveAch(x)) + '">outro igual</button>';
+      h += '<button type="button" class="mini sutil" data-acao="remover"' + du + ' data-f="rem:' + fx + ':' + uid + '">' + IC('x', 13) + 'remover</button>';
+      if (k === mesmos.length - 1) h += '<button type="button" class="mini sutil" data-acao="duplicar"' + du + ' data-f="dup:' + fx + ':' + esc(chaveAch(x)) + '">' + IC('mais', 13) + 'outro igual</button>';
       h += '</div>';
     });
     return h + '</div>';
@@ -3227,10 +3445,11 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
   // ---------- contexto da paciente (só na tela; não entra no laudo nem na cópia) ----------
   // Chips de um clique por dado (clicar de novo desmarca) e, se uma regra de medida já tem valor
   // mas falta contexto, o aviso de que escolher.
+  var htmlPaciente = '';
   function renderPaciente(c) {
     var el = $('paciente'), defs = (cat && laudo.mascara().paciente) || [];
-    if (!defs.length) { if (!el.hidden) { el.hidden = true; el.innerHTML = ''; } return; }
-    var h = defs.map(function (p) {
+    if (!defs.length) { if (!el.hidden) { el.hidden = true; el.innerHTML = ''; htmlPaciente = ''; } return; }
+    var h = '<div class="pc-cab">' + IC('pessoa', 15) + 'Contexto <span>não entra no laudo</span></div>' + defs.map(function (p) {
       var atual = laudo.paciente(p.id);
       return '<div class="pc-dado"><span class="pc-rot">' + esc(p.nome) + '</span><span class="pc-ops" role="group" aria-label="' + esc(p.nome) + '">' +
         (p.opcoes || []).map(function (o) {
@@ -3242,10 +3461,10 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     if (falta.length) {
       var nomes = defs.filter(function (p) { return falta.indexOf(p.id) >= 0; }).map(function (p) { var n = String(p.nome); return n === n.toUpperCase() ? n : n.toLowerCase(); });
       var lista = nomes.length > 1 ? nomes.slice(0, -1).join(', ') + ' e ' + nomes[nomes.length - 1] : nomes[0];
-      h += '<div class="pc-aviso">Escolha ' + esc(lista) + ' para o app avaliar as medidas</div>';
+      h += '<div class="pc-aviso">' + IC('info', 15) + 'Escolha ' + esc(lista) + ' para o app avaliar as medidas</div>';
     }
     if (el.hidden) el.hidden = false;
-    if (el.innerHTML !== h) el.innerHTML = h; // não mexe no DOM (nem no foco) se nada mudou
+    if (htmlPaciente !== h) { htmlPaciente = h; el.innerHTML = h; } // não mexe no DOM (nem no foco) se nada mudou
   }
 
   function aoClicarPaciente(e) {
@@ -3537,9 +3756,10 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
 
   function renderRodape(c) {
     var n = c.pendencias;
-    var h = n ? '<span class="pend">' + plural(n, 'campo por preencher', 'campos por preencher') + '</span>' : '<span>Nenhum campo por preencher</span>';
-    if (copiadoEm) h += '<span class="copiado">Copiado às ' + copiadoEm + '</span>';
-    h += '<span class="dicas">Ctrl+Enter copia · / busca · Tab vai ao próximo campo pendente</span>';
+    var h = n ? '<button type="button" class="pend" data-acao="prox-pendente" title="Ir ao próximo campo por preencher (Tab)">' + IC('campo', 15) + plural(n, 'campo por preencher', 'campos por preencher') + '</button>'
+      : '<span class="tudo-ok">' + IC('okc', 15) + 'Nenhum campo por preencher</span>';
+    if (copiadoEm) h += '<span class="copiado">' + IC('ok', 14) + 'Copiado às ' + copiadoEm + '</span>';
+    h += '<span class="dicas"><kbd>Ctrl</kbd><kbd>Enter</kbd> copia <i></i> <kbd>/</kbd> busca <i></i> <kbd>Tab</kbd> próximo campo</span>';
     $('rodape').innerHTML = h;
   }
 
@@ -3614,6 +3834,15 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     return ok;
   }
 
+  var timerBotao = null;
+  function botaoCopiar(feito) {
+    var b = $('btnCopiar');
+    b.classList.toggle('feito', !!feito);
+    b.innerHTML = IC(feito ? 'ok' : 'copiar', 18) + '<span>' + (feito ? 'Copiado' : 'Copiar laudo') + '</span>';
+    clearTimeout(timerBotao);
+    if (feito) timerBotao = setTimeout(function () { botaoCopiar(false); }, 1800);
+  }
+
   function copiar() {
     if (!cat) return;
     if (sincronizar()) curarFolha();
@@ -3621,6 +3850,7 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     var fim = function (ok) {
       if (ok) {
         copiadoEm = hora();
+        botaoCopiar(true);
         avisar('Copiado' + (c.pendencias ? ' · ' + plural(c.pendencias, 'campo sem preencher', 'campos sem preencher') : ''), c.pendencias > 0);
       } else avisar('Não foi possível copiar', true);
       renderRodape(laudo.compor());
@@ -3692,6 +3922,12 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
       if (!daFaixa.length) return;
       daFaixa.forEach(function (i) { laudo.remover(i.uid); });
       render();
+    } else if (acao === 'ir-faixa') {
+      if (!fx) return;
+      if (busca) { busca = ''; $('busca').value = ''; }
+      var fa = montarEstrutura().porId[fx];
+      if (fa && fa.aux) abertos[fx] = true;
+      renderAchados(); mostrarFaixa(fx);
     } else if (acao === 'fx-mais' || acao === 'fx-abrir') {
       abertos[fx] = !abertos[fx];
       var fid = b.getAttribute('data-f');
@@ -3906,6 +4142,15 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     document.querySelector('.topo').addEventListener('click', aoClicarTopo);
     $('mascaras').addEventListener('click', aoClicarTopo);
     $('achados').addEventListener('click', aoClicarAchados);
+    $('marcados').addEventListener('click', aoClicarAchados);
+    $('rodape').addEventListener('click', function (e) {
+      if (!e.target.closest('[data-acao="prox-pendente"]')) return;
+      var r = document.querySelector(PENDENTE);
+      if (r) focarCampo(r);
+    });
+    botaoCopiar(false);
+    $('btnNovo').innerHTML = IC('novo', 17) + '<span>Novo laudo</span>';
+    document.querySelector('.busca').insertAdjacentHTML('afterbegin', IC('buscar', 16));
     $('paciente').addEventListener('click', aoClicarPaciente);
     // formulário: medidas (campos do laudo, com a mesma conversão de unidade) e opções
     $('achados').addEventListener('input', function (e) {
