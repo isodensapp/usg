@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<!-- Isodens USG, montado em 2026-11-26 11:37: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
+<!-- Isodens USG, montado em 2026-11-26 12:52: abdome, cervical-tireoide, ginecologia, mama, obstetricia, mao, punho, rins-vias-prostata -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
@@ -2891,7 +2891,25 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
       });
     });
   }
+  // ---------- favoritos por uso ----------
+  // Conta só o que saiu num laudo copiado (não o clique, que pode ser engano), uma vez por laudo.
+  // A partir de USO_MIN laudos, o achado deixa de ficar atrás do "mais" naquela categoria.
+  var USO_MIN = 2, contados = {};
+  function usoDe(g, a) { return ((prefs.uso || {})[cat.id] || {})[g + '/' + a] || 0; }
+  function contarUso() {
+    var mudou = false;
+    laudo.estado.achados.forEach(function (inst) {
+      if (contados[inst.uid]) return;
+      contados[inst.uid] = true;
+      prefs.uso = prefs.uso || {};
+      var u = prefs.uso[cat.id] = prefs.uso[cat.id] || {}, k = inst.grupo + '/' + inst.achado;
+      u[k] = (u[k] || 0) + 1; mudou = true;
+    });
+    if (mudou) salvarPrefs();
+  }
+
   function zerarTela() {
+    contados = {};
     busca = ''; $('busca').value = '';
     escolhaAberta = null; copiadoEm = null; formAberto = null;
     $('rolagemFolha').scrollTop = 0; $('achados').scrollTop = 0;
@@ -3289,7 +3307,7 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
 
   function htmlFaixa(f, insts) {
     var on = contagem(insts);
-    var fixo = function (x) { return x.a.frequente || !!M.formularioDe(x.a); };
+    var fixo = function (x) { return x.a.frequente || !!M.formularioDe(x.a) || usoDe(x.g.id, x.a.id) >= USO_MIN; };
     var freq = f.itens.filter(fixo), resto = f.itens.filter(function (x) { return !fixo(x); });
     var recolhe = f.itens.length > 6 && resto.length > 1, aberto = !!abertos[f.id];
     var h = '<section class="faixa' + (insts.length ? ' tem' : '') + '" data-faixa="' + f.id + '" aria-label="' + esc(f.nome) + '">' +
@@ -3850,6 +3868,7 @@ button.campo.escolhida.auto { border-bottom-style: dashed; }
     var fim = function (ok) {
       if (ok) {
         copiadoEm = hora();
+        contarUso();
         botaoCopiar(true);
         avisar('Copiado' + (c.pendencias ? ' · ' + plural(c.pendencias, 'campo sem preencher', 'campos sem preencher') : ''), c.pendencias > 0);
       } else avisar('Não foi possível copiar', true);
